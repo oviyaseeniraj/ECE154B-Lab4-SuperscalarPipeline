@@ -152,7 +152,7 @@ always @ * begin
    case(ImmSrcD_i)
       imm_Itype: ExtImmD = {{20{InstrD[31]}},InstrD[31:20]};
       imm_Stype: ExtImmD = {{20{InstrD[31]}},InstrD[31:25],InstrD[11:7]};
-      imm_Btype: ExtImmD = {{20{InstrD[31]}},InstrD[7],InstrD[30:25], InstrD[11:8],1'b0};
+      imm_Btype: ExtImmD = {{20{InsD[31]}},InstrD[7],InstrD[30:25], InstrD[11:8],1'b0};
       imm_Jtype: ExtImmD = {{12{InstrD[31]}},InstrD[19:12],InstrD[20],InstrD[30:21],1'b0};
       imm_Utype: ExtImmD = {InstrD[31:12],12'b0};
       default:   ExtImmD = 32'bx; 
@@ -432,7 +432,14 @@ ucsbece154b_rf rf (
 reg [31:0] ExtImmD2;
 
 // inject NOP into slot 2 decode stage on hazard
-wire Hazard = RAW || WAW || WAR || (op_o == instr_branch_op) || (op_o == instr_jal_op) || (op_o == instr_jalr_op);
+wire Slot2Valid = InstrF2_i != 32'h00000013;
+
+wire Hazard = Slot2Valid && (
+  RAW || WAW || WAR ||
+  (op_o == instr_branch_op) ||
+  (op_o == instr_jal_op) ||
+  (op_o == instr_jalr_op)
+);
 
 always @ * begin
    case(ImmSrcD2_i)
