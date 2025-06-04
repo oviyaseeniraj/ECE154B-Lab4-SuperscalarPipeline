@@ -155,7 +155,7 @@ assign funct7b5_o = InstrD[30];
 assign Rs1D_o = InstrD[19:15];
 assign Rs2D_o = InstrD[24:20];
 assign RdD = InstrD[11:7];
-assign RdD_o = RdD;
+assign RdD1_o = RdD;
 
 wire [31:0] RD1D, RD2D;
 
