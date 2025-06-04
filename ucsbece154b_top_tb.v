@@ -49,58 +49,59 @@ initial begin
     @(posedge clk);
     reset = 0;
 
-    for (i = 0; i < 500; i = i + 1) begin
-        @(posedge clk);
+    begin : count_loop
+        for (i = 0; i < 500; i = i + 1) begin
+            @(posedge clk);
 
-        prev_pc1 <= top.riscv.dp.PCF_o;
-        prev_pc2 <= top.riscv.dp.PCF2_o;
-        cycle_count = cycle_count + 1;
+            prev_pc1 <= top.riscv.dp.PCF_o;
+            prev_pc2 <= top.riscv.dp.PCF2_o;
+            cycle_count = cycle_count + 1;
 
-        // Terminate when both slots reach NOP and stay there
-        if ((top.riscv.dp.InstrF_i == 32'h00000013) &&
-            (top.riscv.dp.InstrF2_i == 32'h00000013) &&
-            (prev_pc1 == top.riscv.dp.PCF_o) &&
-            (prev_pc2 == top.riscv.dp.PCF2_o)) begin
-            disable count_loop;
-        end
+            // Terminate when both slots reach NOP and stay there
+            if ((top.riscv.dp.InstrF_i == 32'h00000013) &&
+                (top.riscv.dp.InstrF2_i == 32'h00000013) &&
+                (prev_pc1 == top.riscv.dp.PCF_o) &&
+                (prev_pc2 == top.riscv.dp.PCF2_o)) begin
+                disable count_loop;
+            end
 
-        // Count instruction issue
-        if (!reset) begin
-            if (top.riscv.dp.InstrD !== 32'b0 && top.riscv.dp.InstrD != 32'h00000013)
-                instruction_count = instruction_count + 1;
-            if (top.riscv.dp.InstrD2 !== 32'b0 && top.riscv.dp.InstrD2 != 32'h00000013)
-                instruction_count = instruction_count + 1;
+            // Count instruction issue
+            if (!reset) begin
+                if (top.riscv.dp.InstrD !== 32'b0 && top.riscv.dp.InstrD != 32'h00000013)
+                    instruction_count = instruction_count + 1;
+                if (top.riscv.dp.InstrD2 !== 32'b0 && top.riscv.dp.InstrD2 != 32'h00000013)
+                    instruction_count = instruction_count + 1;
 
-            // Branch / Jump - Slot 1
-            case (top.riscv.dp.opE)
-                7'b1100011: begin
-                    branch_count = branch_count + 1;
-                    if (top.riscv.dp.Mispredict_o)
-                        branch_miss_count = branch_miss_count + 1;
-                end
-                7'b1101111, 7'b1100111: begin
-                    jump_count = jump_count + 1;
-                    if (!top.riscv.dp.BranchTakenF)
-                        jump_miss_count = jump_miss_count + 1;
-                end
-            endcase
+                // Branch / Jump - Slot 1
+                case (top.riscv.dp.opE)
+                    7'b1100011: begin
+                        branch_count = branch_count + 1;
+                        if (top.riscv.dp.Mispredict_o)
+                            branch_miss_count = branch_miss_count + 1;
+                    end
+                    7'b1101111, 7'b1100111: begin
+                        jump_count = jump_count + 1;
+                        if (!top.riscv.dp.BranchTakenF)
+                            jump_miss_count = jump_miss_count + 1;
+                    end
+                endcase
 
-            // Branch / Jump - Slot 2
-            case (top.riscv.dp.opE2)
-                7'b1100011: begin
-                    branch_count = branch_count + 1;
-                    if (top.riscv.dp.Mispredict2_o)
-                        branch_miss_count = branch_miss_count + 1;
-                end
-                7'b1101111, 7'b1100111: begin
-                    jump_count = jump_count + 1;
-                    if (!top.riscv.dp.BranchTakenF2)
-                        jump_miss_count = jump_miss_count + 1;
-                end
-            endcase
+                // Branch / Jump - Slot 2
+                case (top.riscv.dp.opE2)
+                    7'b1100011: begin
+                        branch_count = branch_count + 1;
+                        if (top.riscv.dp.Mispredict2_o)
+                            branch_miss_count = branch_miss_count + 1;
+                    end
+                    7'b1101111, 7'b1100111: begin
+                        jump_count = jump_count + 1;
+                        if (!top.riscv.dp.BranchTakenF2)
+                            jump_miss_count = jump_miss_count + 1;
+                    end
+                endcase
+            end
         end
     end
-    count_loop: ;
 
     $display("---- PROGRAM COMPLETE ----");
     $display("Register values:");
