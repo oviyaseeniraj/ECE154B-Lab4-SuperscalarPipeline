@@ -361,16 +361,6 @@ wire [31:0] PCTargetE2 = PCE2 + ExtImmE2;  // FIXED: Define early
 reg [31:0] PCPlus4E2;      // PC+4 in EX stage
 reg [31:0] ResultW2;
 
-ucsbece154b_rf rf (
-    .clk(~clk),
-    .a1_i(Rs1D_o), .a2_i(Rs2D_o), .a3_i(RdW_o),
-    .rd1_o(RD1D), .rd2_o(RD2D),
-    .we3_i(RegWriteW_i), .wd3_i(ResultW),
-    .a1_i2(Rs1D2_o), .a2_i2(Rs2D2_o), .a3_i2(RdW2_o),
-    .rd1_o2(RD1D2), .rd2_o2(RD2D2),
-    .we3_i2(RegWriteW2_i), .wd3_i2(ResultW2)
-);
-
 // NEW: Internal signals for branch predictor
 wire [31:0] BTBtargetF2;
 wire BranchTakenF2;
@@ -428,6 +418,16 @@ assign RdD2 = InstrD2[11:7];
 assign RdD2_o = RdD2;
 
 wire [31:0] RD1D2, RD2D2;
+
+ucsbece154b_rf rf (
+    .clk(~clk),
+    .a1_i(Rs1D_o), .a2_i(Rs2D_o), .a3_i(RdW_o),
+    .rd1_o(RD1D), .rd2_o(RD2D),
+    .we3_i(RegWriteW_i), .wd3_i(ResultW),
+    .a1_i2(Rs1D2_o), .a2_i2(Rs2D2_o), .a3_i2(RdW2_o),
+    .rd1_o2(RD1D2), .rd2_o2(RD2D2),
+    .we3_i2(RegWriteW2_i), .wd3_i2(ResultW2)
+);
 
 reg [31:0] ExtImmD2;
 
