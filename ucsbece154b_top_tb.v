@@ -28,6 +28,11 @@ wire [31:0] reg_t6 = top.riscv.dp.rf.t6;
 wire [31:0] InstrD = top.riscv.dp.InstrD;
 wire [31:0] InstrD2 = top.riscv.dp.InstrD2;
 
+wire [31:0] PCF_o = top.riscv.dp.PCF_o;
+wire [31:0] PCF2_o = top.riscv.dp.PCF2_o;
+wire [31:0] InstrF_i = top.riscv.dp.InstrF_i;
+wire [31:0] InstrF2_i = top.riscv.dp.InstrF2_i;
+
 wire Hazard = top.riscv.dp.Hazard;
 
 integer cycle_count;
