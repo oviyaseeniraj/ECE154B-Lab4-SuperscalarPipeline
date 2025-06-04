@@ -401,10 +401,14 @@ wire [31:0] mispredPC2 = BranchTakenE2 ? PCPlus4E2 : PCTargetE2;
 wire [31:0] PCnewF2 = Mispredict2_o ? mispredPC2 : PCtargetF2;
 
 always @(posedge clk) begin
-  if (reset) 
+  if (reset)
     PCF2_o <= pc_start + 32'd4;
-  else if (!StallF2_i)
-    PCF2_o <= fetch_single_for_slot1 ? PCF_o + 32'd4 : PCF_o + 32'd8;
+  else if (!StallF2_i) begin
+    if (fetch_single_for_slot1)
+      PCF2_o <= PCF2_o + 32'd4; // fetch only one instruction
+    else
+      PCF2_o <= PCF2_o + 32'd8; // dual issue: fetch two
+  end
 end
 
 
