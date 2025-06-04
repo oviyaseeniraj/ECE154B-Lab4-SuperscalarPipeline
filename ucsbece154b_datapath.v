@@ -400,7 +400,7 @@ ucsbece154b_branch #(NUM_BTB_ENTRIES, NUM_GHR_BITS) branch_predictor2 (
 
 // ***** FETCH STAGE *********************************
 
-wire [31:0] PCPlus4F2 = issuedSlot2ThisCycle ? PCF_o + 8 : PCF2_o + 32'd8;
+wire [31:0] PCPlus4F2 = issuedSlot2ThisCycle ? PCF_o + 4 : PCF2_o + 32'd8;
 wire [31:0] PCtargetF2 = BranchTakenF2 ? BTBtargetF2 : PCPlus4F2;
 wire [31:0] mispredPC2 = BranchTakenE2 ? PCPlus4E2 : PCTargetE2;
 wire [31:0] PCnewF2 = Mispredict2_o ? mispredPC2 : PCtargetF2;
@@ -461,8 +461,8 @@ always @ (posedge clk) begin
         PHTwriteaddrD2   <= 5'b0;
         BranchTakenD2    <= 1'b0;
     end else if (!StallD2_i) begin
-        if (Hazard) begin
-            InstrD2       <= 32'h00000013; // Inject NOP only once when hazard detected
+        if (Hazard || !issuedSlot2ThisCycle) begin
+            InstrD2       <= 32'h00000013; // Inject NOP
             PCPlus4D2     <= 32'b0;
             PCD2          <= 32'b0;
             PHTwriteaddrD2 <= 5'b0;
@@ -476,6 +476,7 @@ always @ (posedge clk) begin
         end
     end
 end
+
 
 // ***** EXECUTE STAGE ******************************
 reg [31:0] RD1E2, RD2E2;
