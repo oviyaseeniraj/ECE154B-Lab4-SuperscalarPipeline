@@ -39,7 +39,7 @@ wire WAR = top.riscv.c.WAR;
 
 wire [4:0] rs1_1 = top.riscv.c.Rs1D_i;
 wire [4:0] rs2_1 = top.riscv.c.Rs2D_i;
-wire [4:0] rd_1 = top.riscv.c.RdD_i;
+wire [4:0] rd_1 = top.riscv.c.RdD1_i;
 wire [4:0] rs1_2 = top.riscv.c.Rs1D2_i;
 wire [4:0] rs2_2 = top.riscv.c.Rs2D2_i;
 wire [4:0] rd_2 = top.riscv.c.RdD2_i;
