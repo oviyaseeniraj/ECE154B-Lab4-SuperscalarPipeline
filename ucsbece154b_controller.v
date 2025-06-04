@@ -178,16 +178,7 @@ wire IssueSlot2;
     end
  end
 
- //assign PCSrcE_o = BranchE & (ZeroE_i ^ BranchTypeE) | JumpE; 
- wire beq_instr  = (opE == instr_branch_op) && (funct3E == instr_beq_funct3);
- wire bne_instr  = (opE == instr_branch_op) && (funct3E == instr_bne_funct3);
-
- wire take_beq_as_bne = beq_instr && (ZeroE_i == 1'b0);
- wire take_bne_as_beq = bne_instr && (ZeroE_i == 1'b1);
-
- assign PCSrcE_o = JumpE 
-               || take_beq_as_bne 
-               || take_bne_as_beq;
+ assign PCSrcE_o = BranchE & (ZeroE_i ^ BranchTypeE) | JumpE;
 
 
 // Update registers (move control signals via pipeline)
@@ -376,16 +367,7 @@ wire IssueSlot2;
     end
  end
 
- //assign PCSrcE2_o = BranchE2 & (ZeroE2_i ^ BranchTypeE2) | JumpE2; 
-   wire beq_instr2  = (opE2 == instr_branch_op) && (funct3E2 == instr_beq_funct3);
-   wire bne_instr2  = (opE2 == instr_branch_op) && (funct3E2 == instr_bne_funct3);
-
-   wire take_beq_as_bne2 = beq_instr2 && (ZeroE2_i == 1'b0);
-   wire take_bne_as_beq2 = bne_instr2 && (ZeroE2_i == 1'b1);
-
-   assign PCSrcE2_o = JumpE2 
-                  || take_beq_as_bne2 
-                  || take_bne_as_beq2;
+ assign PCSrcE2_o = BranchE2 & (ZeroE2_i ^ BranchTypeE2) | JumpE2;
 
 // Update registers (move control signals via pipeline)
  always @(posedge clk) begin
@@ -475,7 +457,7 @@ always @(posedge clk) begin
    wire loadUse1 = (ResultSrcE == 2'b01) && ((Rs1D_i == RdE_i && RdE_i != 0) || (Rs2D_i == RdE_i && RdE_i != 0));
    wire loadUse2 = (ResultSrcE2 == 2'b01) && ((Rs1D2_i == RdE2_i && RdE2_i != 0) || (Rs2D2_i == RdE2_i && RdE2_i != 0));
 
-   assign IssueSlot2 = ~(RAW || WAW || WAR || BranchD || JumpD || loadUse1 || loadUse2);
+   assign IssueSlot2 = ~(RAW || WAW || WAR || loadUse1 || loadUse2);
 
    assign StallF2_o = loadUse1 || loadUse2;
    assign StallD2_o = loadUse1 || loadUse2;
