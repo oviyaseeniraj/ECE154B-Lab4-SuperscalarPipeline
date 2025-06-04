@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/oviya/ECE154B-Lab4-SuperscalarPipeline",
+      "program": "/Users/oviya/ECE154B-Lab4-SuperscalarPipeline/build/Debug/outDebug"
+    }
+  ]
+}

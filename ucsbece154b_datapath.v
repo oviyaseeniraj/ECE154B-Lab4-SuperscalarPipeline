@@ -149,7 +149,10 @@ ucsbece154b_rf rf (
     .clk(~clk),
     .a1_i(Rs1D_o), .a2_i(Rs2D_o), .a3_i(RdW_o),
     .rd1_o(RD1D), .rd2_o(RD2D),
-    .we3_i(RegWriteW_i), .wd3_i(ResultW)
+    .we3_i(RegWriteW_i), .wd3_i(ResultW),
+    .a1_i2(Rs1D2_o), .a2_i2(Rs2D2_o), .a3_i2(RdW2_o),
+    .rd1_o2(RD1D2), .rd2_o2(RD2D2),
+    .we3_i2(RegWriteW2_i), .wd3_i2(ResultW2)
 );
 
 reg [31:0] ExtImmD;

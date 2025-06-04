@@ -38,12 +38,16 @@ ucsbece154b_riscv_pipe riscv (
 );
 
 ucsbece154_imem imem (
-    .a_i(pc), .rd_o(instr)
+    .a_i(pc), .rd_o(instr),
+    .a_i2(pc2), .rd_o2(instr2)
 );
 ucsbece154_dmem dmem (
     .clk(clk), .we_i(memwrite),
     .a_i(dataadr), .wd_i(writedata),
-    .rd_o(readdata)
+    .rd_o(readdata),
+    .a2_i(dataadr2), .wd2_i(writedata2),
+    .we2_i(memwrite2),
+    .rd2_o(readdata2)
 );
 
 endmodule

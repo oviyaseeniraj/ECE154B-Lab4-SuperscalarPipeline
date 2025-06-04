@@ -6,22 +6,34 @@
 
 module ucsbece154b_rf (
     input               clk,
+
+    // slot 1
     input         [4:0] a1_i, a2_i, a3_i,
     output wire  [31:0] rd1_o, rd2_o,
     input               we3_i,
-    input        [31:0] wd3_i
+    input        [31:0] wd3_i,
+
+    // slot 2
+    input        [4:0] a1_i2, a2_i2, a3_i2,
+    output wire  [31:0] rd1_o2, rd2_o2,
+    input               we3_i2,
+    input        [31:0] wd3_i2
 );
 
 reg [31:0] MEM [0:31];
 
 assign rd1_o = MEM[a1_i];
 assign rd2_o = MEM[a2_i];
+assign rd1_o2 = MEM[a1_i2];
+assign rd2_o2 = MEM[a2_i2];
 
 initial MEM[0] = 32'b0;
 
 always @ (posedge clk) begin
     if (we3_i && (a3_i!=5'b0))
         MEM[a3_i] <= wd3_i;
+    if (we3_i2 && (a3_i2!=5'b0))
+        MEM[a3_i2] <= wd3_i2;
 // `ifdef SIM
 //     if (we3_i && (a3_i==5'b0))
 //         $warning("Attempted to write to $zero register");
