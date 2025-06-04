@@ -166,8 +166,9 @@ wire [31:0] PCnewF = Mispredict_o ? mispredPC : PCtargetF;
 always @ (posedge clk) begin
     if (reset)
         PCF_o <= pc_start;
-    else if (!StallF_i) // StallF_i is stall for slot1's own pipeline (e.g. from controller's lwStall)
+    else if (!StallF_i && !StallF2_i) // Only update PC if neither slot is stalled
         PCF_o <= PCnewF;
+    // else retain previous PCF_o value if either slot is stalled
 end
 
 // ***** DECODE STAGE ********************************
