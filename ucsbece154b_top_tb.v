@@ -33,6 +33,10 @@ wire [31:0] PCF2_o = top.riscv.dp.PCF2_o;
 wire [31:0] InstrF_i = top.riscv.dp.InstrF_i;
 wire [31:0] InstrF2_i = top.riscv.dp.InstrF2_i;
 
+wire RAW = top.riscv.c.RAW;
+wire WAW = top.riscv.c.WAW;
+wire WAR = top.riscv.c.WAR;
+
 wire Hazard = top.riscv.dp.Hazard;
 
 integer cycle_count;
