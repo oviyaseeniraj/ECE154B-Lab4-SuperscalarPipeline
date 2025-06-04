@@ -434,8 +434,8 @@ always @(posedge clk) begin
    assign IssueSlot2 = ~(RAW || WAW || WAR || BranchD || JumpD || loadUse1 || loadUse2);
    assign FlushD2_o = ~IssueSlot2;
 
-   //assign StallF_o = loadUse1 || loadUse2;
-   //assign StallD_o = loadUse1 || loadUse2;
+   assign StallF2_o = loadUse1 || loadUse2;
+   assign StallD2_o = loadUse1 || loadUse2;
    assign FlushD2_o = ~IssueSlot2;
    assign FlushE2_o = ~IssueSlot2 || Mispredict2_i;
 
