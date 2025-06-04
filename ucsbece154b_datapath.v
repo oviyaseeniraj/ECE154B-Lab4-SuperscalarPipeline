@@ -439,10 +439,6 @@ ucsbece154b_rf rf (
 
 reg [31:0] ExtImmD2;
 
-// inject NOP into slot 2 decode stage on hazard
-wire Hazard = RAW || WAW || WAR || Mispredict_o || Mispredict2_o;
-//assign InstrF2_i = Hazard ? 32'h00000013 : InstrF2_i;
-
 always @ * begin
    case(ImmSrcD2_i)
       imm_Itype: ExtImmD2 = {{20{InstrD2[31]}},InstrD2[31:20]};
