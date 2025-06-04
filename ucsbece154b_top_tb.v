@@ -7,13 +7,12 @@ always #1 clk <= ~clk;
 
 reg reset;
 
-// Instantiate top-level design
 ucsbece154b_top top (
     .clk(clk),
     .reset(reset)
 );
 
-// Register file probes (for scoreboard checking)
+// Register file probes
 wire [31:0] reg_s0 = top.riscv.dp.rf.s0;
 wire [31:0] reg_s1 = top.riscv.dp.rf.s1;
 wire [31:0] reg_s2 = top.riscv.dp.rf.s2;
@@ -26,14 +25,11 @@ wire [31:0] reg_t4 = top.riscv.dp.rf.t4;
 wire [31:0] reg_t5 = top.riscv.dp.rf.t5;
 wire [31:0] reg_t6 = top.riscv.dp.rf.t6;
 
-// Performance counters
 integer cycle_count;
 integer instruction_count;
 integer branch_count, branch_miss_count;
 integer jump_count, jump_miss_count;
 
-reg BranchTakenD, BranchTakenE;
-reg [31:0] BranchPCD, BranchPCE;
 reg [31:0] prev_pc1, prev_pc2;
 
 integer i;
@@ -53,34 +49,37 @@ initial begin
     @(posedge clk);
     reset = 0;
 
-    for (i = 0; i < 500 && !((prev_pc1 == top.riscv.dp.PCF_o && top.riscv.dp.InstrF_i == 32'h0000006f) &&
-                             (prev_pc2 == top.riscv.dp.PCF2_o && top.riscv.dp.InstrF2_i == 32'h0000006f)); i = i + 1) begin
-        @(posedge clk);
+    for (i = 0; i < 500 &&
+         !((prev_pc1 == top.riscv.dp.PCF_o && top.riscv.dp.InstrF_i == 32'h00000013) &&
+           (prev_pc2 == top.riscv.dp.PCF2_o && top.riscv.dp.InstrF2_i == 32'h00000013)); i = i + 1) begin
 
+        @(posedge clk);
         prev_pc1 <= top.riscv.dp.PCF_o;
         prev_pc2 <= top.riscv.dp.PCF2_o;
         cycle_count = cycle_count + 1;
 
-        // Count instruction issue for both slots
+        // Count instruction issue
         if (!reset) begin
-            if (top.riscv.dp.InstrD !== 32'b0) instruction_count = instruction_count + 1;
-            if (top.riscv.dp.InstrD2 !== 32'b0) instruction_count = instruction_count + 1;
+            if (top.riscv.dp.InstrD !== 32'b0 && top.riscv.dp.InstrD != 32'h00000013)
+                instruction_count = instruction_count + 1;
+            if (top.riscv.dp.InstrD2 !== 32'b0 && top.riscv.dp.InstrD2 != 32'h00000013)
+                instruction_count = instruction_count + 1;
 
-            // Branch and JAL tracking
+            // Branch / Jump - Slot 1
             case (top.riscv.dp.opE)
-                7'b1100011: begin // branch
+                7'b1100011: begin
                     branch_count = branch_count + 1;
                     if (top.riscv.dp.Mispredict_o)
                         branch_miss_count = branch_miss_count + 1;
                 end
-                7'b1101111, 7'b1100111: begin // jal / jalr
+                7'b1101111, 7'b1100111: begin
                     jump_count = jump_count + 1;
                     if (!top.riscv.dp.BranchTakenF)
                         jump_miss_count = jump_miss_count + 1;
                 end
             endcase
 
-            // Also check slot 2 for branches/jumps
+            // Branch / Jump - Slot 2
             case (top.riscv.dp.opE2)
                 7'b1100011: begin
                     branch_count = branch_count + 1;
