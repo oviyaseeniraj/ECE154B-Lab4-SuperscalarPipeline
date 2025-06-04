@@ -69,7 +69,7 @@ module ucsbece154b_datapath (
     output reg           Mispredict2_o,
 
     // From decode stage of datapath
-    output wire [4:0]  RdD1_o, RdD2_o,
+    output reg [4:0]  RdD1_o, RdD2_o,
 
     input RAW,
     input WAR,
