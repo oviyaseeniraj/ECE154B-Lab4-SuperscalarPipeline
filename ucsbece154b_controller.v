@@ -450,9 +450,14 @@ always @(posedge clk) begin
 
 
    // Hazard unit (stall and data forwarding)
-   assign RAW = ((Rs1D2_i == RdD1_i) || (Rs2D2_i == RdD1_i)) && RegWriteD;
-   assign WAW = (RdD1_i == RdD2_i) && RegWriteD && RegWriteD2;
-   assign WAR = ((Rs1D_i == RdD2_i) || (Rs2D_i == RdD2_i)) && RegWriteD2;
+   assign RAW = ((Rs1D2_i == RdD1_i) && (RdD1_i != 5'b0) ||
+              (Rs2D2_i == RdD1_i) && (RdD1_i != 5'b0)) && RegWriteD;
+
+   assign WAW = (RdD1_i == RdD2_i) && (RdD1_i != 5'b0) &&
+               RegWriteD && RegWriteD2;
+
+   assign WAR = ((Rs1D_i == RdD2_i) && (RdD2_i != 5'b0) ||
+               (Rs2D_i == RdD2_i) && (RdD2_i != 5'b0)) && RegWriteD2;
 
    wire loadUse1 = (ResultSrcE == 2'b01) && ((Rs1D_i == RdE_i && RdE_i != 0) || (Rs2D_i == RdE_i && RdE_i != 0));
    wire loadUse2 = (ResultSrcE2 == 2'b01) && ((Rs1D2_i == RdE2_i && RdE2_i != 0) || (Rs2D2_i == RdE2_i && RdE2_i != 0));
