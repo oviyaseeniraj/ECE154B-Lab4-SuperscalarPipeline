@@ -153,8 +153,8 @@ wire IssueSlot2;
 
  always @ * begin
   case(funct3_i)
-    instr_beq_funct3:      BranchTypeD = 1'b0;
-    instr_bne_funct3:      BranchTypeD = 1'b1;
+    instr_beq_funct3:      BranchTypeD = 1'b1;
+    instr_bne_funct3:      BranchTypeD = 1'b0;
     default:               BranchTypeD = 1'bx;
    endcase
  end
@@ -328,8 +328,8 @@ wire IssueSlot2;
 
  always @ * begin
   case(funct3_2_i)
-    instr_beq_funct3:      BranchTypeD2 = 1'b0;
-    instr_bne_funct3:      BranchTypeD2 = 1'b1;
+    instr_beq_funct3:      BranchTypeD2 = 1'b1;
+    instr_bne_funct3:      BranchTypeD2 = 1'b0;
     default:               BranchTypeD2 = 1'bx;
    endcase
  end
