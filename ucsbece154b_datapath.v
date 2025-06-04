@@ -399,7 +399,7 @@ wire [31:0] mispredPC2 = BranchTakenE2 ? PCPlus4E2 : PCTargetE2;
 wire [31:0] PCnewF2 = Mispredict2_o ? mispredPC2 : PCtargetF2;
 
 always @ (posedge clk) begin
-    if (reset)        PCF2_o <= pc_start2;
+    if (reset)        PCF2_o <= PCF_o + 4;
     else if (!StallF2_i) PCF2_o <= PCnewF2;
 end
 
@@ -553,7 +553,7 @@ always @(*) begin
 end
 
 always @ (posedge clk) begin
-    if (reset | FlushE2_i | Mispredict_o) begin
+    if (reset | FlushE2_i | Mispredict2_o) begin
         RD1E2     <= 32'b0;
         RD2E2     <= 32'b0;
         PCE2      <= 32'b0;
