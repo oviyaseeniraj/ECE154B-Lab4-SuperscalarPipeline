@@ -25,6 +25,12 @@ wire [31:0] reg_t4 = top.riscv.dp.rf.t4;
 wire [31:0] reg_t5 = top.riscv.dp.rf.t5;
 wire [31:0] reg_t6 = top.riscv.dp.rf.t6;
 
+wire [31:0] InstrD = top.riscv.dp.InstrD;
+wire [31:0] InstrD2 = top.riscv.dp.InstrD2;
+
+wire Hazard = top.riscv.dp.Hazard;
+wire issuedSlot2ThisCycle = top.riscv.dp.issuedSlot2ThisCycle;
+
 integer cycle_count;
 integer instruction_count;
 integer branch_count, branch_miss_count;
