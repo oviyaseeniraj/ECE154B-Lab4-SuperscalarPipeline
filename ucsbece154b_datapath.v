@@ -164,11 +164,16 @@ wire [31:0] mispredPC = BranchTakenE ? PCPlus4E : PCTargetE;
 wire [31:0] PCnewF = Mispredict_o ? mispredPC : PCtargetF;
 
 always @ (posedge clk) begin
-    if (reset)
-        PCF_o <= pc_start;
-    else if (!StallF_i && !StallF2_i) // Only update PC if neither slot is stalled
-        PCF_o <= PCnewF;
-    // else retain previous PCF_o value if either slot is stalled
+  if (reset)
+    PCF_o <= pc_start;
+  else if (FlushD_i)
+    PCF_o <= PCF_o + 32'd4; // still advance for flush
+  else if (!StallF_i && !StallF2_i) begin
+    if (slot2_predicted_branch_taken)
+      PCF_o <= PCF_o + 32'd4;
+    else
+      PCF_o <= PCF_o + 32'd8;
+  end
 end
 
 // ***** DECODE STAGE ********************************
