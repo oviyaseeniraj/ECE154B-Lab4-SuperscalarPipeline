@@ -383,7 +383,7 @@ ucsbece154b_branch #(NUM_BTB_ENTRIES, NUM_GHR_BITS) branch_predictor2 (
     .BTBtarget_o(BTBtargetF2),
     .BTB_we(BTBweE2),
     .BranchTaken_o(BranchTakenF2),
-    .op_i(op_o2),
+    .op_i(op2_o),
     .PHTincrement_i(PHTincE2),
     .GHRreset_i(GHRresetE2),
     .PHTwe_i(PHTweE2),
