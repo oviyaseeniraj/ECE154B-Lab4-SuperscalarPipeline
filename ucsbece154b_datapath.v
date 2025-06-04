@@ -122,19 +122,26 @@ ucsbece154b_branch #(NUM_BTB_ENTRIES, NUM_GHR_BITS) branch_predictor (
 
 // ***** FETCH STAGE *********************************;
 
-wire issuedSlot2ThisCycle = !StallD2_i && !(RAW || WAR || WAW ||
-                                            (op_o == instr_branch_op) ||
-                                            (op_o == instr_jal_op) ||
-                                            (op_o == instr_jalr_op));
-
-wire [31:0] PCPlus4F = PCF_o + (issuedSlot2ThisCycle ? 32'd8 : 32'd4);
+wire [31:0] PCPlus4F = PCF_o + (StallF2_i ? 32'd4 : 32'd8);
 wire [31:0] PCtargetF = BranchTakenF ? BTBtargetF : PCPlus4F;
 wire [31:0] mispredPC = BranchTakenE ? PCPlus4E : PCTargetE;
 wire [31:0] PCnewF = Mispredict_o ? mispredPC : PCtargetF;
 
+// Track PCnewF in a register so slot2 can use it next cycle
+reg [31:0] PCnewF_r;
 always @ (posedge clk) begin
-    if (reset)        PCF_o <= pc_start;
-    else if (!StallF_i) PCF_o <= PCnewF;
+    if (reset)
+        PCnewF_r <= pc_start;
+    else if (!StallF_i)
+        PCnewF_r <= PCnewF;
+end
+
+// PC update logic for slot 1
+always @ (posedge clk) begin
+    if (reset)
+        PCF_o <= pc_start;
+    else if (!StallF_i)
+        PCF_o <= PCnewF;
 end
 
 // ***** DECODE STAGE ********************************
@@ -401,14 +408,27 @@ ucsbece154b_branch #(NUM_BTB_ENTRIES, NUM_GHR_BITS) branch_predictor2 (
 // ***** FETCH STAGE *********************************
 
 
-wire [31:0] PCPlus4F2 = issuedSlot2ThisCycle ? PCF_o + 12 : PCF2_o + 32'd8;
+wire [31:0] PCPlus4F2 = PCF2_o + 32'd4;
 wire [31:0] PCtargetF2 = BranchTakenF2 ? BTBtargetF2 : PCPlus4F2;
 wire [31:0] mispredPC2 = BranchTakenE2 ? PCPlus4E2 : PCTargetE2;
 wire [31:0] PCnewF2 = Mispredict2_o ? mispredPC2 : PCtargetF2;
 
+// Track previous cycle's stall for slot2
+reg StallF2_i_prev;
 always @ (posedge clk) begin
-    if (reset)        PCF2_o <= PCF_o + 4;
-    else if (!StallF2_i) PCF2_o <= PCnewF2;
+    StallF2_i_prev <= StallF2_i;
+end
+
+// PC update logic for slot 2
+always @ (posedge clk) begin
+    if (reset)
+        PCF2_o <= pc_start + 4;  // initial offset from PCF_o
+    else if (!StallF2_i) begin
+        if (StallF2_i_prev)  // hazard just cleared
+            PCF2_o <= PCnewF_r + 32'd4;  // re-align to PCF_o + 4
+        else
+            PCF2_o <= PCnewF2;
+    end
 end
 
 // ***** DECODE STAGE ********************************
