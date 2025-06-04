@@ -203,12 +203,14 @@ always @ (posedge clk) begin
         PCD      <= 32'b0;
         PHTwriteaddrD <= 5'b0;
         BranchTakenD <= 1'b0;
+        RdD1_o <= 5'b0;
     end else if (!StallD_i) begin 
         InstrD   <= InstrF_i;
         PCPlus4D <= PCPlus4F;
         PCD      <= PCF_o;
         PHTwriteaddrD <= PHTreadaddrF;
         BranchTakenD <= BranchTakenF;
+        RdD1_o <= InstrF_i[11:7];
     end 
 end
 
@@ -465,12 +467,14 @@ always @ (posedge clk) begin
         PCD2             <= 32'b0;
         PHTwriteaddrD2   <= 5'b0;
         BranchTakenD2    <= 1'b0;
+        RdD2_o <= 5'b0;
     end else if (!StallD2_i) begin
         InstrD2          <= InstrF2_i;
         PCPlus4D2        <= PCPlus4F2;
         PCD2             <= PCF2_o;
         PHTwriteaddrD2   <= PHTreadaddrF2;
         BranchTakenD2    <= BranchTakenF2;
+        RdD2_o          <= InstrF2_i[11:7];
     end
 end
 
