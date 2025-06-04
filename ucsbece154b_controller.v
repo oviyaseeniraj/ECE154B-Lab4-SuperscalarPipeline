@@ -153,8 +153,8 @@ wire IssueSlot2;
 
  always @ * begin
   case(funct3_i)
-    instr_beq_funct3:      BranchTypeD = 1'b1;
-    instr_bne_funct3:      BranchTypeD = 1'b0;
+    instr_beq_funct3:      BranchTypeD = 1'b0;
+    instr_bne_funct3:      BranchTypeD = 1'b1;
     default:               BranchTypeD = 1'bx;
    endcase
  end
@@ -164,8 +164,31 @@ wire IssueSlot2;
  reg RegWriteE, MemWriteE, JumpE, BranchE;
  reg BranchTypeE;
  reg [1:0] ResultSrcE;
+ reg [6:0] opE;
+ reg [2:0] funct3E;
 
- assign PCSrcE_o = BranchE & (ZeroE_i ^ BranchTypeE) | JumpE; 
+ // Pipeline registers for op_i and funct3_i
+ always @(posedge clk) begin
+    if (FlushE_o | reset) begin
+        opE     <= 7'b0;
+        funct3E <= 3'b0;
+    end else begin
+        opE     <= op_i;
+        funct3E <= funct3_i;
+    end
+ end
+
+ //assign PCSrcE_o = BranchE & (ZeroE_i ^ BranchTypeE) | JumpE; 
+ wire beq_instr  = (opE == instr_branch_op) && (funct3E == instr_beq_funct3);
+ wire bne_instr  = (opE == instr_branch_op) && (funct3E == instr_bne_funct3);
+
+ wire take_beq_as_bne = beq_instr && (ZeroE_i == 1'b0);
+ wire take_bne_as_beq = bne_instr && (ZeroE_i == 1'b1);
+
+ assign PCSrcE_o = JumpE 
+               || take_beq_as_bne 
+               || take_bne_as_beq;
+
 
 // Update registers (move control signals via pipeline)
  always @(posedge clk) begin
@@ -328,8 +351,8 @@ wire IssueSlot2;
 
  always @ * begin
   case(funct3_2_i)
-    instr_beq_funct3:      BranchTypeD2 = 1'b1;
-    instr_bne_funct3:      BranchTypeD2 = 1'b0;
+    instr_beq_funct3:      BranchTypeD2 = 1'b0;
+    instr_bne_funct3:      BranchTypeD2 = 1'b1;
     default:               BranchTypeD2 = 1'bx;
    endcase
  end
@@ -339,8 +362,30 @@ wire IssueSlot2;
  reg RegWriteE2, MemWriteE2, JumpE2, BranchE2;
  reg BranchTypeE2;
  reg [1:0] ResultSrcE2;
+ reg [6:0] opE2;
+ reg [2:0] funct3E2;
 
- assign PCSrcE2_o = BranchE2 & (ZeroE2_i ^ BranchTypeE2) | JumpE2; 
+ // Pipeline registers for op2_i and funct3_2_i
+ always @(posedge clk) begin
+    if (FlushE2_o | reset) begin
+        opE2     <= 7'b0;
+        funct3E2 <= 3'b0;
+    end else begin
+        opE2     <= op2_i;
+        funct3E2 <= funct3_2_i;
+    end
+ end
+
+ //assign PCSrcE2_o = BranchE2 & (ZeroE2_i ^ BranchTypeE2) | JumpE2; 
+   wire beq_instr2  = (opE2 == instr_branch_op) && (funct3E2 == instr_beq_funct3);
+   wire bne_instr2  = (opE2 == instr_branch_op) && (funct3E2 == instr_bne_funct3);
+
+   wire take_beq_as_bne2 = beq_instr2 && (ZeroE2_i == 1'b0);
+   wire take_bne_as_beq2 = bne_instr2 && (ZeroE2_i == 1'b1);
+
+   assign PCSrcE2_o = JumpE2 
+                  || take_beq_as_bne2 
+                  || take_bne_as_beq2;
 
 // Update registers (move control signals via pipeline)
  always @(posedge clk) begin
