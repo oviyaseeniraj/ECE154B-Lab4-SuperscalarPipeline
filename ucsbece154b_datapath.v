@@ -172,7 +172,6 @@ end
 
 // ***** DECODE STAGE ********************************
 reg [31:0] InstrD, PCPlus4D, PCD;
-wire [4:0] RdD;
 
 assign op_o       = InstrD[6:0];
 assign funct3_o   = InstrD[14:12];
@@ -180,8 +179,7 @@ assign funct7b5_o = InstrD[30];
 
 assign Rs1D_o = InstrD[19:15];
 assign Rs2D_o = InstrD[24:20];
-assign RdD = InstrD[11:7];
-assign RdD1_o = RdD;
+assign RdD1_o = InstrD[11:7];
 
 wire [31:0] RD1D, RD2D;
 
@@ -327,7 +325,7 @@ always @ (posedge clk) begin
         PCPlus4E <= PCPlus4D;
         Rs1E_o   <= Rs1D_o;
         Rs2E_o   <= Rs2D_o;
-        RdE_o    <= RdD;
+        RdE_o    <= RdD1_o;
         PHTwriteaddrE <= PHTwriteaddrD;
         opE <= op_o;
         BranchTakenE <= BranchTakenD;
@@ -422,7 +420,6 @@ end
 
 // ***** DECODE STAGE ********************************
 reg [31:0] InstrD2, PCPlus4D2, PCD2;
-wire [4:0] RdD2;
 
 assign op2_o       = InstrD2[6:0];
 assign funct3_2_o   = InstrD2[14:12];
@@ -430,9 +427,7 @@ assign funct7b5_2_o = InstrD2[30];
 
 assign Rs1D2_o = InstrD2[19:15];
 assign Rs2D2_o = InstrD2[24:20];
-assign RdD2 = InstrD2[11:7];
-
-assign RdD2_o = RdD2;
+assign RdD2_o = InstrD2[11:7];
 
 wire [31:0] RD1D2, RD2D2;
 
@@ -592,7 +587,7 @@ always @ (posedge clk) begin
         PCPlus4E2 <= PCPlus4D2;
         Rs1E2_o   <= Rs1D2_o;
         Rs2E2_o   <= Rs2D2_o;
-        RdE2_o    <= RdD2;
+        RdE2_o    <= RdD2_o;
         PHTwriteaddrE2 <= PHTwriteaddrD2;
         opE2 <= op2_o;
         BranchTakenE2 <= BranchTakenD2;
