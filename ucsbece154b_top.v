@@ -10,6 +10,9 @@ module ucsbece154b_top (
 );
 
 wire [31:0] pc, instr, readdata;
+wire [31:0] pc2, instr2, readdata2;
+wire        memwrite2;
+wire [31:0] writedata2, dataadr2;
 wire [31:0] writedata, dataadr;
 wire        memwrite;
 
