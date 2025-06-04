@@ -12,16 +12,10 @@ ucsbece154b_top top (
     .reset(reset)
 );
 
-// Register file probes
-wire [31:0] reg_s0 = top.riscv.dp.rf.s0;
-wire [31:0] reg_s1 = top.riscv.dp.rf.s1;
-
 integer cycle_count;
 integer instruction_count;
-
 reg [31:0] prev_pc1, prev_pc2;
 
-integer i;
 initial begin
     $display("Begin simulation.");
     reset = 1;
@@ -30,12 +24,12 @@ initial begin
     prev_pc1 = 0;
     prev_pc2 = 0;
 
-    @(posedge clk);
-    @(posedge clk);
+    @(posedge clk); @(posedge clk);
     reset = 0;
 
-    for (i = 0; i < 200 && !((prev_pc1 == top.riscv.dp.PCF_o && top.riscv.dp.InstrF_i == 32'h00000013) &&
-                             (prev_pc2 == top.riscv.dp.PCF2_o && top.riscv.dp.InstrF2_i == 32'h00000013)); i = i + 1) begin
+    // Wait until both slots fetch the NOP (termination)
+    for (int i = 0; i < 100 && !((top.riscv.dp.InstrF_i == 32'h00000013) &&
+                                 (top.riscv.dp.InstrF2_i == 32'h00000013)); i++) begin
         @(posedge clk);
         prev_pc1 <= top.riscv.dp.PCF_o;
         prev_pc2 <= top.riscv.dp.PCF2_o;
@@ -47,11 +41,9 @@ initial begin
             instruction_count++;
     end
 
-    $display("---- PROGRAM COMPLETE ----");
-    $display("s0 = %0d", reg_s0);
-    $display("s1 = %0d", reg_s1);
-    $display("Instruction count: %0d", instruction_count);
-    $display("Cycle count:       %0d", cycle_count);
+    $display("---- DONE ----");
+    $display("Instruction Count: %0d", instruction_count);
+    $display("Cycle Count:       %0d", cycle_count);
     $display("CPI:               %0f", 1.0 * cycle_count / instruction_count);
     $stop;
 end
