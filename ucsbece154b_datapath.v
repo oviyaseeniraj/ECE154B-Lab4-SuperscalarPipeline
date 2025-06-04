@@ -433,6 +433,7 @@ reg [31:0] ExtImmD2;
 
 // inject NOP into slot 2 decode stage on hazard
 wire Hazard = RAW || WAW || WAR || (op_o == instr_branch_op) || (op_o == instr_jal_op) || (op_o == instr_jalr_op);
+//assign InstrF2_i = Hazard ? 32'h00000013 : InstrF2_i;
 
 always @ * begin
    case(ImmSrcD2_i)
@@ -447,6 +448,7 @@ end
 
 always @ (posedge clk) begin
     if (reset | FlushD2_i | Hazard) begin
+        InstrD2   <= 32'h00000013; // NOP instruction
         PCPlus4D2 <= 32'b0;
         PCD2      <= 32'b0;
         PHTwriteaddrD2 <= 5'b0;
