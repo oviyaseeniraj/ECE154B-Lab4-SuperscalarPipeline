@@ -122,19 +122,12 @@ ucsbece154b_branch #(NUM_BTB_ENTRIES, NUM_GHR_BITS) branch_predictor (
 
 // ***** FETCH STAGE *********************************;
 
-reg issuedSlot2LastCycle;
+wire issuedSlot2ThisCycle = !StallD2_i && !(RAW || WAR || WAW ||
+                                            (op_o == instr_branch_op) ||
+                                            (op_o == instr_jal_op) ||
+                                            (op_o == instr_jalr_op));
 
-always @(posedge clk) begin
-    if (reset)
-        issuedSlot2LastCycle <= 1'b0;
-    else if (!StallD2_i)  // Only update if decode stage is not stalled
-        issuedSlot2LastCycle <= !(RAW || WAR || WAW ||
-                                  (op_o == instr_branch_op) ||
-                                  (op_o == instr_jal_op) ||
-                                  (op_o == instr_jalr_op));
-end
-
-wire [31:0] PCPlus4F = PCF_o + (issuedSlot2LastCycle ? 32'd8 : 32'd4);
+wire [31:0] PCPlus4F = PCF_o + (issuedSlot2ThisCycle ? 32'd8 : 32'd4);
 wire [31:0] PCtargetF = BranchTakenF ? BTBtargetF : PCPlus4F;
 wire [31:0] mispredPC = BranchTakenE ? PCPlus4E : PCTargetE;
 wire [31:0] PCnewF = Mispredict_o ? mispredPC : PCtargetF;
@@ -408,7 +401,7 @@ ucsbece154b_branch #(NUM_BTB_ENTRIES, NUM_GHR_BITS) branch_predictor2 (
 // ***** FETCH STAGE *********************************
 
 
-wire [31:0] PCPlus4F2 = PCF_o + 32'd8;
+wire [31:0] PCPlus4F2 = PCF2_o + 32'd8;
 wire [31:0] PCtargetF2 = BranchTakenF2 ? BTBtargetF2 : PCPlus4F2;
 wire [31:0] mispredPC2 = BranchTakenE2 ? PCPlus4E2 : PCTargetE2;
 wire [31:0] PCnewF2 = Mispredict2_o ? mispredPC2 : PCtargetF2;
