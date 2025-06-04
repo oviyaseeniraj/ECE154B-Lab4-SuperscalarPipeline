@@ -471,19 +471,27 @@ always @ * begin
 end
 
 always @ (posedge clk) begin
-    if (reset | FlushD2_i | Hazard) begin
-        InstrD2   <= 32'h00000013; // NOP instruction
-        PCPlus4D2 <= 32'b0;
-        PCD2      <= 32'b0;
-        PHTwriteaddrD2 <= 5'b0;
-        BranchTakenD2 <= 1'b0;
-    end else if (!StallD2_i) begin 
-        InstrD2   <= InstrF2_i;
-        PCPlus4D2 <= PCPlus4F2;
-        PCD2      <= PCF2_o;
-        PHTwriteaddrD2 <= PHTreadaddrF2;
-        BranchTakenD2 <= BranchTakenF2;
-    end 
+    if (reset | FlushD2_i) begin
+        InstrD2          <= 32'h00000013; // NOP instruction
+        PCPlus4D2        <= 32'b0;
+        PCD2             <= 32'b0;
+        PHTwriteaddrD2   <= 5'b0;
+        BranchTakenD2    <= 1'b0;
+    end else if (!StallD2_i) begin
+        if (Hazard) begin
+            InstrD2       <= 32'h00000013; // Inject NOP only once when hazard detected
+            PCPlus4D2     <= 32'b0;
+            PCD2          <= 32'b0;
+            PHTwriteaddrD2 <= 5'b0;
+            BranchTakenD2 <= 1'b0;
+        end else begin
+            InstrD2        <= InstrF2_i;
+            PCPlus4D2      <= PCPlus4F2;
+            PCD2           <= PCF2_o;
+            PHTwriteaddrD2 <= PHTreadaddrF2;
+            BranchTakenD2  <= BranchTakenF2;
+        end
+    end
 end
 
 // ***** EXECUTE STAGE ******************************
