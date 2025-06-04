@@ -63,7 +63,11 @@ module ucsbece154b_controller (
     input                Mispredict2_i,
 
     input [4:0] RdD1_i,
-    input [4:0] RdD2_i
+    input [4:0] RdD2_i,
+
+    output RAW,
+    output WAR,
+    output WAW
 );
 
 
@@ -382,7 +386,7 @@ wire IssueSlot2;
 // ***** WRITEBACK STAGE ***************************************
 
 // Update registers (move control signals via pipeline)
- always @(posedge clk) begin
+always @(posedge clk) begin
     if(reset) begin 
        RegWriteW2_o  <= 1'b0;
        ResultSrcW2_o <= 2'b0;
@@ -420,9 +424,9 @@ wire IssueSlot2;
 
 
    // Hazard unit (stall and data forwarding)
-   wire RAW = ((Rs1D2_i == RdD1_i) || (Rs2D2_i == RdD1_i)) && RegWriteD;
-   wire WAW = (RdD1_i == RdD2_i) && RegWriteD && RegWriteD2;
-   wire WAR = ((Rs1D_i == RdD2_i) || (Rs2D_i == RdD2_i)) && RegWriteD2;
+   assign RAW = ((Rs1D2_i == RdD1_i) || (Rs2D2_i == RdD1_i)) && RegWriteD;
+   assign WAW = (RdD1_i == RdD2_i) && RegWriteD && RegWriteD2;
+   assign WAR = ((Rs1D_i == RdD2_i) || (Rs2D_i == RdD2_i)) && RegWriteD2;
 
    wire loadUse1 = (ResultSrcE == 2'b01) && ((Rs1D_i == RdE_i && RdE_i != 0) || (Rs2D_i == RdE_i && RdE_i != 0));
    wire loadUse2 = (ResultSrcE2 == 2'b01) && ((Rs1D2_i == RdE2_i && RdE2_i != 0) || (Rs2D2_i == RdE2_i && RdE2_i != 0));

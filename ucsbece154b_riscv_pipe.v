@@ -23,6 +23,7 @@ module ucsbece154b_riscv_pipe (
 );
 
 wire [4:0] RdD1, RdD2;
+wire RAW, WAR, WAW;
 
 wire  PCSrcE, StallF, StallD, FlushD, RegWriteW, FlushE, ALUSrcE, ZeroE;
 wire [6:0] op;
@@ -103,7 +104,11 @@ ucsbece154b_controller c (
     .RegWriteW2_o(RegWriteW2),
     .ResultSrcW2_o(ResultSrcW2),
     .ResultSrcM2_o(ResultSrcM2),
-    .Mispredict2_i(mispredict2)
+    .Mispredict2_i(mispredict2),
+
+    .RAW(RAW),
+    .WAR(WAR),
+    .WAW(WAW)
 );
 
 ucsbece154b_datapath dp (
@@ -170,7 +175,10 @@ ucsbece154b_datapath dp (
     .ResultSrcM2_i(ResultSrcM2),
     .Mispredict2_o(mispredict2),
     .RdD1_o(RdD1),
-    .RdD2_o(RdD2)
+    .RdD2_o(RdD2),
+    .RAW(RAW),
+    .WAR(WAR),
+    .WAW(WAW)
 );
 
 endmodule

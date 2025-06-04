@@ -69,7 +69,11 @@ module ucsbece154b_datapath (
     output reg           Mispredict2_o,
 
     // From decode stage of datapath
-    output wire [4:0]  RdD1_o, RdD2_o
+    output wire [4:0]  RdD1_o, RdD2_o,
+
+    input RAW,
+    input WAR,
+    input WAW
 );
 
 `include "ucsbece154b_defines.vh"
@@ -422,15 +426,6 @@ assign RdD2_o = RdD2;
 wire [31:0] RD1D2, RD2D2;
 
 reg [31:0] ExtImmD2;
-
-// RAW detection
-wire RAW_rs1 = (Rs1D2_o != 0) && (Rs1D2_o == RdD) && RegWriteD_i;
-wire RAW_rs2 = (Rs2D2_o != 0) && (Rs2D2_o == RdD) && RegWriteD_i;
-wire RAW = RAW_rs1 || RAW_rs2;
-
-// WAW detection
-wire WAW = (RdD2 != 0) && (RdD2 == RdD) && RegWriteD_i && RegWriteD2_i;
-wire WAR = ((Rs1D_o == RdD2 && RdD2 != 0) || (Rs2D_o == RdD2 && RdD2 != 0)) && RegWriteD2_i;
 
 // inject NOP into slot 2 decode stage on hazard
 wire Hazard = RAW || WAW || WAR || (op_o == instr_branch_op) || (op_o == instr_jal_op) || (op_o == instr_jalr_op);
