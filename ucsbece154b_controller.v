@@ -431,7 +431,8 @@ always @(posedge clk) begin
    wire loadUse1 = (ResultSrcE == 2'b01) && ((Rs1D_i == RdE_i && RdE_i != 0) || (Rs2D_i == RdE_i && RdE_i != 0));
    wire loadUse2 = (ResultSrcE2 == 2'b01) && ((Rs1D2_i == RdE2_i && RdE2_i != 0) || (Rs2D2_i == RdE2_i && RdE2_i != 0));
 
-   assign IssueSlot2 = ~(RAW || WAW || WAR || BranchD || JumpD || loadUse1 || loadUse2);
+   //assign IssueSlot2 = ~(RAW || WAW || WAR || BranchD || JumpD || loadUse1 || loadUse2);
+   assign IssueSlot2 = 1'b1; // always issue slot 2 for now
    assign FlushD2_o = ~IssueSlot2;
 
    assign StallF_o = loadUse1 || loadUse2;
