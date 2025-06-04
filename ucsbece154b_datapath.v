@@ -120,8 +120,7 @@ ucsbece154b_branch #(NUM_BTB_ENTRIES, NUM_GHR_BITS) branch_predictor (
     .PHTreadaddress_o(PHTreadaddrF)
 );
 
-// ***** FETCH STAGE *********************************
-wire [31:0] PCPlus4F = PCF_o + 32'd4;
+// ***** FETCH STAGE *********************************;
 wire [31:0] PCtargetF = BranchTakenF ? BTBtargetF : PCPlus4F;
 wire [31:0] mispredPC = BranchTakenE ? PCPlus4E : PCTargetE;
 wire [31:0] PCnewF = Mispredict_o ? mispredPC : PCtargetF;
@@ -393,7 +392,7 @@ ucsbece154b_branch #(NUM_BTB_ENTRIES, NUM_GHR_BITS) branch_predictor2 (
 );
 
 // ***** FETCH STAGE *********************************
-wire [31:0] PCPlus4F2 = PCF2_o + 32'd4;
+wire [31:0] PCPlus4F2 = PCF2_o + 32'd8;
 wire [31:0] PCtargetF2 = BranchTakenF2 ? BTBtargetF2 : PCPlus4F2;
 wire [31:0] mispredPC2 = BranchTakenE2 ? PCPlus4E2 : PCTargetE2;
 wire [31:0] PCnewF2 = Mispredict2_o ? mispredPC2 : PCtargetF2;
