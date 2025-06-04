@@ -242,8 +242,7 @@ wire IssueSlot2;
 
 // Stall logic
  wire lwStall = (ResultSrcE == 1) & ((Rs1D_i == RdE_i) | (Rs2D_i == RdE_i)) & (RdE_i != 0); 
-
- assign lwStall = (ResultSrcE == 1) & ( (Rs1D_i == RdE_i) | (Rs2D_i == RdE_i) ) & (RdE_i != 0); 
+ //assign lwStall = (ResultSrcE == 1) & ( (Rs1D_i == RdE_i) | (Rs2D_i == RdE_i) ) & (RdE_i != 0); 
  assign StallF_o = lwStall; 
  assign StallD_o = lwStall; 
  assign FlushD_o = Mispredict_i; 
@@ -304,7 +303,7 @@ wire IssueSlot2;
     ALUop_other: 
        case(funct3_2_i)
            instr_addsub_funct3: 
-                 if(RtypeSubD) ALUControlD2 = ALUcontrol_sub;
+                 if(RtypeSubD2) ALUControlD2 = ALUcontrol_sub;
                  else          ALUControlD2 = ALUcontrol_add;  
            instr_slt_funct3:   ALUControlD2 = ALUcontrol_slt;  
            instr_or_funct3:    ALUControlD2 = ALUcontrol_or;  
@@ -432,7 +431,6 @@ always @(posedge clk) begin
    wire loadUse2 = (ResultSrcE2 == 2'b01) && ((Rs1D2_i == RdE2_i && RdE2_i != 0) || (Rs2D2_i == RdE2_i && RdE2_i != 0));
 
    assign IssueSlot2 = ~(RAW || WAW || WAR || BranchD || JumpD || loadUse1 || loadUse2);
-   assign FlushD2_o = ~IssueSlot2;
 
    assign StallF2_o = loadUse1 || loadUse2;
    assign StallD2_o = loadUse1 || loadUse2;
