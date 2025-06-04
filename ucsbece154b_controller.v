@@ -430,7 +430,7 @@ wire IssueSlot2;
    assign IssueSlot2 = ~(RAW || WAW || WAR || BranchD || JumpD || loadUse1 || loadUse2);
    assign FlushD2_o = ~IssueSlot2;
 
-   assign StallF_o = loadUse1 || loadUse2;;
+   assign StallF_o = loadUse1 || loadUse2;
    assign StallD_o = loadUse1 || loadUse2;
    assign FlushD_o = Mispredict_i; // should i or w/ FlushD from slot1?
    assign FlushD2_o = ~IssueSlot2;
