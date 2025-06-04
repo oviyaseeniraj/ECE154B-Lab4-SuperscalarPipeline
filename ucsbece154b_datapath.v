@@ -415,7 +415,6 @@ wire [31:0] PCnewF2 = Mispredict2_o ? mispredPC2 : PCtargetF2;
 
 always @ (posedge clk) begin
     if (reset)        PCF2_o <= PCF_o + 4;
-    else if (Hazard) PCF2_o <= PCF2_o;
     else if (!StallF2_i) PCF2_o <= PCnewF2;
 end
 
