@@ -368,7 +368,7 @@ reg [31:0] PCE2;           // Program counter in EX stage
 reg [31:0] ExtImmE2;       // Immediate in EX stage
 wire [31:0] PCTargetE2 = PCE2 + ExtImmE2;  // FIXED: Define early
 reg [31:0] PCPlus4E2;      // PC+4 in EX stage
-reg [31:0] ResultW2;
+// reg [31:0] ResultW2;
 
 // NEW: Internal signals for branch predictor
 wire [31:0] BTBtargetF2;
@@ -426,7 +426,7 @@ assign RdD2 = InstrD2[11:7];
 
 assign RdD2_o = RdD2;
 
-wire [31:0] RD1D2, RD2D2;
+//wire [31:0] RD1D2, RD2D2;
 
 reg [31:0] ExtImmD2;
 
