@@ -402,15 +402,23 @@ wire [31:0] mispredPC2 = BranchTakenE2 ? PCPlus4E2 : PCTargetE2;
 wire [31:0] PCnewF2 = Mispredict2_o ? mispredPC2 : PCtargetF2;
 
 // Track previous cycle's stall for slot2
-always @ (posedge clk) begin
-    if (reset) begin
-        PCF2_o <= pc_start + 32'd4;
-    end else if ( (Mispredict2_o || BranchTakenF2) && !StallF2_i && !(Mispredict_o || BranchTakenF) ) begin
-        PCF2_o <= PCnewF2;
-    end else if (!StallF2_i) begin
-        PCF2_o <= PCnewF - 32'd4;
-    end
+// always @ (posedge clk) begin
+//     if (reset) begin
+//         PCF2_o <= pc_start + 32'd4;
+//     end else if ( (Mispredict2_o || BranchTakenF2) && !StallF2_i && !(Mispredict_o || BranchTakenF) ) begin
+//         PCF2_o <= PCnewF2;
+//     end else if (!StallF2_i) begin
+//         PCF2_o <= PCnewF - 32'd4;
+//     end
+// end
+
+always @(posedge clk) begin
+  if (reset) 
+    PCF2_o <= pc_start + 32'd4;
+  else if (!StallF2_i)
+    PCF2_o <= PCF_o + 32'd4;
 end
+
 
 // ***** DECODE STAGE ********************************
 reg [31:0] InstrD2, PCPlus4D2, PCD2;
