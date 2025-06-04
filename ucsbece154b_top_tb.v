@@ -29,7 +29,7 @@ wire [31:0] InstrD = top.riscv.dp.InstrD;
 wire [31:0] InstrD2 = top.riscv.dp.InstrD2;
 
 wire Hazard = top.riscv.dp.Hazard;
-wire issuedSlot2ThisCycle = top.riscv.dp.issuedSlot2ThisCycle;
+wire StallF2_i_prev = top.riscv.dp.StallF2_i_prev;
 
 integer cycle_count;
 integer instruction_count;
