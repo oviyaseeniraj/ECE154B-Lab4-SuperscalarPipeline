@@ -408,7 +408,7 @@ always @ (posedge clk) begin
     end else if ( (Mispredict2_o || BranchTakenF2) && !StallF2_i && !(Mispredict_o || BranchTakenF) ) begin
         PCF2_o <= PCnewF2;
     end else if (!StallF2_i) begin
-        PCF2_o <= PCnewF + 32'd4;
+        PCF2_o <= PCnewF - 32'd4;
     end
 end
 
