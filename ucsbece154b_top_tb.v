@@ -49,9 +49,7 @@ initial begin
     @(posedge clk);
     reset = 0;
 
-    for (i = 0; i < 500 &&
-         !((prev_pc1 == top.riscv.dp.PCF_o && top.riscv.dp.InstrF_i == 32'h00000013) &&
-           (prev_pc2 == top.riscv.dp.PCF2_o && top.riscv.dp.InstrF2_i == 32'h00000013)); i = i + 1) begin
+    for (i = 0; i < 500; i = i + 1) begin
 
         @(posedge clk);
         prev_pc1 <= top.riscv.dp.PCF_o;
