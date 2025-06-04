@@ -120,6 +120,41 @@ ucsbece154b_branch #(NUM_BTB_ENTRIES, NUM_GHR_BITS) branch_predictor (
     .PHTreadaddress_o(PHTreadaddrF)
 );
 
+// Moved earlier to avoid undefined reference
+reg [31:0] PCE2;           // Program counter in EX stage
+reg [31:0] ExtImmE2;       // Immediate in EX stage
+wire [31:0] PCTargetE2 = PCE2 + ExtImmE2;  // FIXED: Define early
+reg [31:0] PCPlus4E2;      // PC+4 in EX stage
+reg [31:0] ResultW2;
+
+wire [31:0] BTBtargetF2;
+//wire BranchTakenF2;
+wire [NUM_GHR_BITS-1:0] PHTreadaddrF2;     // output from branch predictor
+reg  [NUM_GHR_BITS-1:0] PHTwriteaddrD2, PHTwriteaddrE2;    // NEW: FIXED — now legal to assign bc reg not wire
+reg PHTweE2, PHTincE2;
+reg GHRweF2, GHRresetE2;
+reg BTBweE2;
+reg BranchTakenD2, BranchTakenE2;
+reg [NUM_IDX_BITS-1:0] BTBwriteaddrE2;
+reg [31:0] BTBwritedataE2;
+
+ucsbece154b_branch #(NUM_BTB_ENTRIES, NUM_GHR_BITS) branch_predictor2 (
+    .clk(clk),
+    .reset_i(reset),
+    .pc_i(PCF2_o),
+    .BTBwriteaddress_i(BTBwriteaddrE2),
+    .BTBwritedata_i(BTBwritedataE2),
+    .BTBtarget_o(BTBtargetF2),
+    .BTB_we(BTBweE2),
+    .BranchTaken_o(BranchTakenF2),
+    .op_i(op2_o),
+    .PHTincrement_i(PHTincE2),
+    .GHRreset_i(GHRresetE2),
+    .PHTwe_i(PHTweE2),
+    .GHRwe_i(GHRweF2),
+    .PHTwriteaddress_i(PHTwriteaddrE2),
+    .PHTreadaddress_o(PHTreadaddrF2)
+);
 // ***** FETCH STAGE *********************************;
 wire slot2_predicted_branch_taken = BranchTakenF2;
 wire fetch_single_for_slot1 = StallF2_i || slot2_predicted_branch_taken;
@@ -358,43 +393,6 @@ always @ (posedge clk) begin
 end
 
 // ************************** SLOT 2 **************************
-// FIXED: Moved earlier to avoid undefined reference
-reg [31:0] PCE2;           // Program counter in EX stage
-reg [31:0] ExtImmE2;       // Immediate in EX stage
-wire [31:0] PCTargetE2 = PCE2 + ExtImmE2;  // FIXED: Define early
-reg [31:0] PCPlus4E2;      // PC+4 in EX stage
-reg [31:0] ResultW2;
-
-// NEW: Internal signals for branch predictor
-wire [31:0] BTBtargetF2;
-wire BranchTakenF2;
-wire [NUM_GHR_BITS-1:0] PHTreadaddrF2;     // output from branch predictor
-reg  [NUM_GHR_BITS-1:0] PHTwriteaddrD2, PHTwriteaddrE2;    // NEW: FIXED — now legal to assign bc reg not wire
-reg PHTweE2, PHTincE2;
-reg GHRweF2, GHRresetE2;
-reg BTBweE2;
-reg BranchTakenD2, BranchTakenE2;
-reg [NUM_IDX_BITS-1:0] BTBwriteaddrE2;
-reg [31:0] BTBwritedataE2;
-
-// NEW: Branch predictor instantiation
-ucsbece154b_branch #(NUM_BTB_ENTRIES, NUM_GHR_BITS) branch_predictor2 (
-    .clk(clk),
-    .reset_i(reset),
-    .pc_i(PCF2_o),
-    .BTBwriteaddress_i(BTBwriteaddrE2),
-    .BTBwritedata_i(BTBwritedataE2),
-    .BTBtarget_o(BTBtargetF2),
-    .BTB_we(BTBweE2),
-    .BranchTaken_o(BranchTakenF2),
-    .op_i(op2_o),
-    .PHTincrement_i(PHTincE2),
-    .GHRreset_i(GHRresetE2),
-    .PHTwe_i(PHTweE2),
-    .GHRwe_i(GHRweF2),
-    .PHTwriteaddress_i(PHTwriteaddrE2),
-    .PHTreadaddress_o(PHTreadaddrF2)
-);
 
 // ***** FETCH STAGE *********************************
 
