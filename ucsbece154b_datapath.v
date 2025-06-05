@@ -138,7 +138,7 @@ always @ (posedge clk) begin
     PCF_o <= pc_start;
   else if (FlushD_i)
     PCF_o <= PCF_o + 32'd4; // still advance for flush
-  else if (!StallF_i && !StallF2_i) begin
+  else if (!StallF_i) begin
     PCF_o <= PCnewF;
   end
 end
