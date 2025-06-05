@@ -135,13 +135,13 @@ wire BranchF2 = (InstrF2_i[6:0] == instr_branch_op);
 wire JumpF2 = (InstrF2_i[6:0] == instr_jal_op) || (InstrF2_i[6:0] == instr_jalr_op);
 wire BranchJump = BranchF || JumpF || BranchF2 || JumpF2;
 
-wire Rs1D2 = InstrF2_i[19:15];
-wire Rs2D2 = InstrF2_i[24:20];
-wire RdD1 = InstrF_i[11:7];
-wire RdD2 = InstrF2_i[11:7];
+wire [4:0] Rs1D2 = InstrF2_i[19:15];
+wire [4:0] Rs2D2 = InstrF2_i[24:20];
+wire [4:0] RdD1 = InstrF_i[11:7];
+wire [4:0] RdD2 = InstrF2_i[11:7];
 
-wire opF = InstrF_i[6:0];
-wire opF2 = InstrF2_i[6:0];
+wire [6:0] opF = InstrF_i[6:0];
+wire [6:0] opF2 = InstrF2_i[6:0];
 reg RegWriteF;
 reg RegWriteF2;
 
