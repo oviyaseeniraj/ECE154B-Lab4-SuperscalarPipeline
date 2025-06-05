@@ -158,8 +158,8 @@ always @ (*) begin
     case (opF2)
         instr_lui_op, instr_jal_op, instr_jalr_op: RegWriteF2 = 1'b1;
         instr_lw_op: RegWriteF2 = 1'b1;
-        instr_Rtype_op: RegWriteF = 1'b1;
-        instr_ItypeALU_op: RegWriteF = 1'b1;
+        instr_Rtype_op: RegWriteF2 = 1'b1;
+        instr_ItypeALU_op: RegWriteF2 = 1'b1;
         instr_sw_op: RegWriteF2 = 1'b0;
         instr_branch_op: RegWriteF2 = 1'b0;
         default: RegWriteF2 = 1'b0; // NOP or other instructions
