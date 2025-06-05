@@ -48,6 +48,9 @@ wire RegWriteD2 = top.riscv.c.RegWriteD2;
 
 wire Hazard = top.riscv.c.Hazard;
 
+wire Mispredict1 = top.riscv.dp.Mispredict_o;
+wire Mispredict2 = top.riscv.dp.Mispredict2_o;
+
 integer cycle_count;
 integer instruction_count;
 integer branch_count, branch_miss_count;
