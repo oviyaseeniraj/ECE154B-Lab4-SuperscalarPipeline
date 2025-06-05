@@ -242,6 +242,10 @@ wire Hazard;
          ForwardAE_o = forward_mem;
   else if ( (Rs1E_i == RdW_i) & RegWriteW_o & (Rs1E_i != 0) ) 
          ForwardAE_o = forward_wb;
+   else if ((Rs1E_i == RdM2_i) && RegWriteM2 && (Rs1E_i != 0)) 
+    ForwardAE_o = forward_mem;
+   else if ((Rs1E_i == RdW2_i) && RegWriteW2_o && (Rs1E_i != 0)) 
+    ForwardAE_o = forward_wb;
   else   ForwardAE_o = forward_ex;
  end
   
@@ -250,6 +254,11 @@ wire Hazard;
          ForwardBE_o = forward_mem;
   else if ( (Rs2E_i == RdW_i) & RegWriteW_o & (Rs2E_i != 0) ) 
          ForwardBE_o = forward_wb;
+   else if ((Rs2E_i == RdM2_i) && RegWriteM2 && (Rs2E_i != 0)) 
+    ForwardBE_o = forward_mem;
+   else if ((Rs2E_i == RdW2_i) && RegWriteW2_o && (Rs2E_i != 0)) 
+    ForwardBE_o = forward_wb;
+
   else   ForwardBE_o = forward_ex;
  end
 
