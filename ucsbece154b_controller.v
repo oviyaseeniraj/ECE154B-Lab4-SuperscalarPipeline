@@ -87,7 +87,7 @@ module ucsbece154b_controller (
 
  reg [11:0] maindecoderD; // Note that maindecoder is just clubbing of signals for a convinient (compact, human readable) implementaiton of main decoder table. "reg" is required because is maindecoder is used in always block, which is used because of case statements. Also note that default in always blocks is a must in such case, otherwise maindecoder will be treated as register.
 
-wire IssueSlot2;
+wire Hazard;
 
  assign {RegWriteD,	
 	      ImmSrcD_o,
@@ -259,8 +259,8 @@ wire IssueSlot2;
  //assign lwStall = (ResultSrcE == 1) & ( (Rs1D_i == RdE_i) | (Rs2D_i == RdE_i) ) & (RdE_i != 0); 
  assign StallF_o = lwStall; 
  assign StallD_o = lwStall; 
- assign FlushD_o = Mispredict_i; 
- assign FlushE_o = lwStall | Mispredict_i; 
+ assign FlushD_o = Mispredict_i | Mispredict2_i; 
+ assign FlushE_o = lwStall | Mispredict_i | Mispredict2_i;
 
 
 // slot 2
@@ -459,15 +459,19 @@ always @(posedge clk) begin
    assign WAR = ((Rs1D_i == RdD2_i) && (RdD2_i != 5'b0) ||
                (Rs2D_i == RdD2_i) && (RdD2_i != 5'b0)) && RegWriteD2;
 
-   wire loadUse1 = (ResultSrcE == 2'b01) && ((Rs1D_i == RdE_i && RdE_i != 0) || (Rs2D_i == RdE_i && RdE_i != 0));
-   wire loadUse2 = (ResultSrcE2 == 2'b01) && ((Rs1D2_i == RdE2_i && RdE2_i != 0) || (Rs2D2_i == RdE2_i && RdE2_i != 0));
 
-   assign IssueSlot2 = ~(RAW || WAW || WAR || loadUse1 || loadUse2);
+   wire lwStall2 = (ResultSrcE2 == 2'b01) && ((Rs1D2_i == RdE2_i && RdE2_i != 0) || (Rs2D2_i == RdE2_i && RdE2_i != 0));
 
-   assign StallF2_o = loadUse1 || loadUse2;
-   assign StallD2_o = loadUse1 || loadUse2;
-   assign FlushD2_o = ~IssueSlot2 || Mispredict_i || Mispredict2_i;
-   assign FlushE2_o = ~IssueSlot2 || Mispredict2_i || Mispredict_i;
+   // load use hazards between pipelines
+   wire loadUse1 = (ResultSrcE == 2'b01) && ((Rs1D_i == RdE2_i && RdE2_i != 0) || (Rs2D_i == RdE2_i && RdE2_i != 0));
+   wire loadUse2 = (ResultSrcE2 == 2'b01) && ((Rs1D2_i == RdE_i && RdE_i != 0) || (Rs2D2_i == RdE_i && RdE_i != 0));
+
+   assign Hazard = RAW || WAW || WAR || lwStall || lwStall2 || loadUse1 || loadUse2 || BranchD || JumpD || BranchD2 || JumpD2;
+
+   assign StallF2_o = Hazard;
+   assign StallD2_o = Hazard;
+   assign FlushD2_o = Hazard || Mispredict_i || Mispredict2_i;
+   assign FlushE2_o = Hazard || Mispredict2_i || Mispredict_i;
 
 
 endmodule

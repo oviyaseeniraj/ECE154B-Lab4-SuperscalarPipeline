@@ -46,7 +46,7 @@ wire [4:0] rd_2 = top.riscv.c.RdD2_i;
 wire RegWriteD = top.riscv.c.RegWriteD;
 wire RegWriteD2 = top.riscv.c.RegWriteD2;
 
-wire Hazard = ~top.riscv.c.IssueSlot2;
+wire Hazard = top.riscv.c.Hazard;
 
 integer cycle_count;
 integer instruction_count;

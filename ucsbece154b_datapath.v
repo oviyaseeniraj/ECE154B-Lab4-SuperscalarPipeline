@@ -127,38 +127,9 @@ wire [31:0] PCTargetE2 = PCE2 + ExtImmE2;  // FIXED: Define early
 reg [31:0] PCPlus4E2;      // PC+4 in EX stage
 reg [31:0] ResultW2;
 
-wire [31:0] BTBtargetF2;
-//wire BranchTakenF2;
-wire [NUM_GHR_BITS-1:0] PHTreadaddrF2;     // output from branch predictor
-reg  [NUM_GHR_BITS-1:0] PHTwriteaddrD2, PHTwriteaddrE2;    // NEW: FIXED — now legal to assign bc reg not wire
-reg PHTweE2, PHTincE2;
-reg GHRweF2, GHRresetE2;
-reg BTBweE2;
-reg BranchTakenD2, BranchTakenE2;
-reg [NUM_IDX_BITS-1:0] BTBwriteaddrE2;
-reg [31:0] BTBwritedataE2;
 
-ucsbece154b_branch #(NUM_BTB_ENTRIES, NUM_GHR_BITS) branch_predictor2 (
-    .clk(clk),
-    .reset_i(reset),
-    .pc_i(PCF2_o),
-    .BTBwriteaddress_i(BTBwriteaddrE2),
-    .BTBwritedata_i(BTBwritedataE2),
-    .BTBtarget_o(BTBtargetF2),
-    .BTB_we(BTBweE2),
-    .BranchTaken_o(BranchTakenF2),
-    .op_i(op2_o),
-    .PHTincrement_i(PHTincE2),
-    .GHRreset_i(GHRresetE2),
-    .PHTwe_i(PHTweE2),
-    .GHRwe_i(GHRweF2),
-    .PHTwriteaddress_i(PHTwriteaddrE2),
-    .PHTreadaddress_o(PHTreadaddrF2)
-);
 // ***** FETCH STAGE *********************************;
-wire slot2_predicted_branch_taken = BranchTakenF2;
-wire fetch_single_for_slot1 = StallF2_i || slot2_predicted_branch_taken;
-wire [31:0] PCPlus4F = PCF_o + (fetch_single_for_slot1 ? 32'd4 : 32'd8);
+wire [31:0] PCPlus4F = PCF_o + (StallF2_i ? 32'd4 : 32'd8);
 wire [31:0] PCtargetF = BranchTakenF ? BTBtargetF : PCPlus4F;
 wire [31:0] mispredPC = BranchTakenE ? PCPlus4E : PCTargetE;
 wire [31:0] PCnewF = Mispredict_o ? mispredPC : PCtargetF;
@@ -169,10 +140,7 @@ always @ (posedge clk) begin
   else if (FlushD_i)
     PCF_o <= PCF_o + 32'd4; // still advance for flush
   else if (!StallF_i && !StallF2_i) begin
-    if (slot2_predicted_branch_taken)
-      PCF_o <= PCF_o + 32'd4;
-    else
-      PCF_o <= PCF_o + 32'd8;
+    PCF_o <= PCnewF;
   end
 end
 
@@ -303,11 +271,6 @@ always @(*) begin
     // mispredict_o is true if the branch was mispredicted
     // or if the instruction is a jump and the branch was not taken
     Mispredict_o = GHRresetE;
-
-    /**
-    $display("BTBwriteaddrE=%b BTBwritedataE=%h BTBweE=%b PHTwriteaddrE=%b PHTweE=%b PHTincE=%b GHRresetE=%b", 
-        BTBwriteaddrE, BTBwritedataE, BTBweE, PHTwriteaddrE, PHTweE, PHTincE, GHRresetE);
-    */
 end
 
 always @ (posedge clk) begin
@@ -461,15 +424,15 @@ always @ (posedge clk) begin
         InstrD2          <= 32'h00000013; // NOP instruction
         PCPlus4D2        <= 32'b0;
         PCD2             <= 32'b0;
-        PHTwriteaddrD2   <= 5'b0;
-        BranchTakenD2    <= 1'b0;
+        // PHTwriteaddrD2   <= 5'b0;
+        // BranchTakenD2    <= 1'b0;
         RdD2_o <= 5'b0;
     end else if (!StallD2_i) begin
         InstrD2          <= InstrF2_i;
         PCPlus4D2        <= PCPlus4F2;
         PCD2             <= PCF2_o;
-        PHTwriteaddrD2   <= PHTreadaddrF2;
-        BranchTakenD2    <= BranchTakenF2;
+        // PHTwriteaddrD2   <= PHTreadaddrF2;
+        // BranchTakenD2    <= BranchTakenF2;
         RdD2_o          <= InstrF2_i[11:7];
     end
 end
@@ -518,53 +481,6 @@ ucsbece154b_alu alu2 (
     .zero_o(ZeroE2_o)
 );
 
-// Branch predictor control logic (NEW)
-wire is_branch2 = (opE2 == instr_branch_op);
-wire is_jump2 = (opE2 == instr_jal_op) || (opE2 == instr_jalr_op);
-
-wire branch_taken_actual2 = (funct3E2 == instr_beq_funct3 && ZeroE2_o) ||
-                            (funct3E2 == instr_bne_funct3 && !ZeroE2_o);
-
-always @(*) begin
-    // btb write address is the index of the BTB which is the lower NUM_IDX_BITS of the PC
-    BTBwriteaddrE2  = PCE2[NUM_IDX_BITS+1:2];
-
-    // btb write data is the target address of the branch. the target is the PC + immediate
-    // for beq/bne, the target is the PC + immediate
-    BTBwritedataE2  = PCTargetE2;
-
-    // Update BTB on taken branches (including bne)
-    BTBweE2 = (opE2 == instr_branch_op && 
-             ((funct3E2 == instr_beq_funct3 && ZeroE2_o) ||  // beq (taken if ZeroE_o == 1)
-              (funct3E2 == instr_bne_funct3 && !ZeroE2_o)))  // bne (taken if ZeroE_o == 0)
-           || opE2 == instr_jal_op 
-           || opE2 == instr_jalr_op;
-    
-    // Update PHT on all branches in execute
-    PHTweE2 = (opE2 == instr_branch_op);
-
-    // Update GHR on all branches in fetch
-    GHRweF2 = !StallF2_i && (InstrF2_i[6:0] == instr_branch_op);
-    
-    // Increment PHT counter if branch is taken (correct for both beq and bne)
-    PHTincE2 = (opE2 == instr_branch_op && 
-              ((funct3E2 == instr_beq_funct3 && ZeroE2_o) ||   // beq taken
-               (funct3E2 == instr_bne_funct3 && !ZeroE2_o)));  // bne taken
-
-    // Reset GHR on misprediction
-    GHRresetE2 = (is_branch2 && (BranchTakenE2 != branch_taken_actual2)) ||
-                   (is_jump2 && (BranchTakenE2 != 1'b1));
-
-    // mispredict_o is true if the branch was mispredicted
-    // or if the instruction is a jump and the branch was not taken
-    Mispredict2_o = GHRresetE2;
-
-    /**
-    $display("BTBwriteaddrE=%b BTBwritedataE=%h BTBweE=%b PHTwriteaddrE=%b PHTweE=%b PHTincE=%b GHRresetE=%b", 
-        BTBwriteaddrE, BTBwritedataE, BTBweE, PHTwriteaddrE, PHTweE, PHTincE, GHRresetE);
-    */
-end
-
 always @ (posedge clk) begin
     if (reset | FlushE2_i | Mispredict2_o) begin
         RD1E2     <= 32'b0;
@@ -575,9 +491,9 @@ always @ (posedge clk) begin
         Rs1E2_o   <=  5'b0;
         Rs2E2_o   <=  5'b0;
         RdE2_o    <=  5'b0;
-        PHTwriteaddrE2 <= 5'b0;
+        //PHTwriteaddrE2 <= 5'b0;
         opE2 <= 7'b0;
-        BranchTakenE2 <= 1'b0;
+        //BranchTakenE2 <= 1'b0;
         funct3E2 <= 3'b0;
     end else begin 
         RD1E2     <= RD1D2;
@@ -588,9 +504,9 @@ always @ (posedge clk) begin
         Rs1E2_o   <= Rs1D2_o;
         Rs2E2_o   <= Rs2D2_o;
         RdE2_o    <= RdD2_o;
-        PHTwriteaddrE2 <= PHTwriteaddrD2;
+        // PHTwriteaddrE2 <= PHTwriteaddrD2;
         opE2 <= op2_o;
-        BranchTakenE2 <= BranchTakenD2;
+        //BranchTakenE2 <= BranchTakenD2;
         funct3E2 <= funct3_2_o;
     end 
 end
