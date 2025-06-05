@@ -217,7 +217,7 @@ always @ * begin
         forward_ex: WriteDataE = RD2E;
         
         // forward from other pipe
-        {1'b1, forward_mem}: WriteDataE = ALUResultM2_o;
+        {1'b1, forward_mem}: WriteDataE = ForwardDataM2;
         {1'b1, forward_wb}:  WriteDataE = ResultW2;
        default: WriteDataE = 32'bx;
     endcase
@@ -484,7 +484,7 @@ always @ * begin
         forward_ex: WriteDataE2 = RD2E2;
 
         // forward from other pipe
-        {1'b1, forward_mem}: WriteDataE2 = ALUResultM_o;
+        {1'b1, forward_mem}: WriteDataE2 = ForwardDataM;
         {1'b1, forward_wb}:  WriteDataE2 = ResultW;
        default: WriteDataE2 = 32'bx;
     endcase
