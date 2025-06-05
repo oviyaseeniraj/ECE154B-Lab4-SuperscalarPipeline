@@ -371,10 +371,7 @@ always @(posedge clk) begin
   else if (FlushD2_i)
     PCF2_o <= PCF2_o + 32'd4; // still advance PC for flush
   else if (!StallF2_i) begin
-    if (fetch_single_for_slot1)
-      PCF2_o <= PCF2_o + 32'd4;
-    else
-      PCF2_o <= PCF2_o + 32'd8;
+    PCF2_o <= PCnewF + 32'd4; // keep pcf2 4 ahead of pcf
   end
 end
 
