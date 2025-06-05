@@ -87,9 +87,9 @@ initial begin
 
         // Count instruction issue
         if (!reset) begin
-            if (top.riscv.dp.InstrD !== 32'b0 && top.riscv.dp.InstrD != 32'h00000013)
+            if (top.riscv.dp.PCE !== 32'b0)
                 instruction_count = instruction_count + 1;
-            if (top.riscv.dp.InstrD2 !== 32'b0 && top.riscv.dp.InstrD2 != 32'h00000013)
+            if (top.riscv.dp.PCE !== 32'b0)
                 instruction_count = instruction_count + 1;
 
             // Branch / Jump - Slot 1
