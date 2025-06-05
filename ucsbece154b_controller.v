@@ -402,7 +402,7 @@ wire Hazard;
 
 // ***** MEMORY STAGE ******************************************
  reg RegWriteM2;
-
+ 
 // Update registers (move control signals via pipeline)
  always @(posedge clk) begin
     if(reset) begin 
