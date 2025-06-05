@@ -26,8 +26,8 @@ module ucsbece154b_controller (
     output reg     [2:0] ALUControlE_o,
     output reg           ALUSrcE_o,
     output wire          FlushE_o,
-    output reg     [1:0] ForwardAE_o,
-    output reg     [1:0] ForwardBE_o,
+    output reg     [2:0] ForwardAE_o,
+    output reg     [2:0] ForwardBE_o,
     output reg           MemWriteM_o,
     output reg           RegWriteW_o,
     output reg     [1:0] ResultSrcW_o, 
@@ -54,8 +54,8 @@ module ucsbece154b_controller (
     output reg     [2:0] ALUControlE2_o,
     output reg           ALUSrcE2_o,
     output wire          FlushE2_o,
-    output reg     [1:0] ForwardAE2_o,
-    output reg     [1:0] ForwardBE2_o,
+    output reg     [2:0] ForwardAE2_o,
+    output reg     [2:0] ForwardBE2_o,
     output reg           MemWriteM2_o,
     output reg           RegWriteW2_o,
     output reg     [1:0] ResultSrcW2_o, 
@@ -244,9 +244,9 @@ wire Hazard;
   else if ( (Rs1E_i == RdW_i) & RegWriteW_o & (Rs1E_i != 0) ) 
          ForwardAE_o = forward_wb;
    else if ((Rs1E_i == RdM2_i) && RegWriteM2 && (Rs1E_i != 0)) 
-    ForwardAE_o = forward_mem;
+    ForwardAE_o = {1'b1, forward_mem};
    else if ((Rs1E_i == RdW2_i) && RegWriteW2_o && (Rs1E_i != 0)) 
-    ForwardAE_o = forward_wb;
+    ForwardAE_o = {1'b1, forward_wb};
   else   ForwardAE_o = forward_ex;
  end
   
@@ -256,9 +256,9 @@ wire Hazard;
   else if ( (Rs2E_i == RdW_i) & RegWriteW_o & (Rs2E_i != 0) ) 
          ForwardBE_o = forward_wb;
    else if ((Rs2E_i == RdM2_i) && RegWriteM2 && (Rs2E_i != 0)) 
-    ForwardBE_o = forward_mem;
+    ForwardBE_o = {1'b1, forward_mem};
    else if ((Rs2E_i == RdW2_i) && RegWriteW2_o && (Rs2E_i != 0)) 
-    ForwardBE_o = forward_wb;
+    ForwardBE_o = {1'b1, forward_wb};
 
   else   ForwardBE_o = forward_ex;
  end

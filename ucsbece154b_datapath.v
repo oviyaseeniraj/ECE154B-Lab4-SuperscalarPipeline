@@ -24,8 +24,8 @@ module ucsbece154b_datapath (
     output reg     [4:0] RdE_o, 
     input                ALUSrcE_i,
     input          [2:0] ALUControlE_i,
-    input          [1:0] ForwardAE_i,
-    input          [1:0] ForwardBE_i,
+    input          [2:0] ForwardAE_i,
+    input          [2:0] ForwardBE_i,
     output               ZeroE_o,
     output reg     [4:0] RdM_o, 
     output reg    [31:0] ALUResultM_o,
@@ -56,8 +56,8 @@ module ucsbece154b_datapath (
     output reg     [4:0] RdE2_o, 
     input                ALUSrcE2_i,
     input          [2:0] ALUControlE2_i,
-    input          [1:0] ForwardAE2_i,
-    input          [1:0] ForwardBE2_i,
+    input          [2:0] ForwardAE2_i,
+    input          [2:0] ForwardBE2_i,
     output               ZeroE2_o,
     output reg     [4:0] RdM2_o, 
     output reg    [31:0] ALUResultM2_o,
@@ -196,9 +196,14 @@ reg [31:0] ForwardDataM;
 reg  [31:0] SrcAE;
 always @ * begin
     case (ForwardAE_i)
+        // forward from own pipe
        forward_mem: SrcAE = ALUResultM_o; 
         forward_wb: SrcAE = ResultW;
         forward_ex: SrcAE = RD1E;
+
+        // forward from other pipe
+        {1'b1, forward_mem}: SrcAE = ALUResultM2_o;
+        {1'b1, forward_wb}:  SrcAE = ResultW2;
        default: SrcAE = 32'bx;
     endcase
 end
@@ -210,6 +215,10 @@ always @ * begin
        forward_mem: WriteDataE = ForwardDataM; 
         forward_wb: WriteDataE = ResultW;
         forward_ex: WriteDataE = RD2E;
+        
+        // forward from other pipe
+        {1'b1, forward_mem}: WriteDataE = ALUResultM2_o;
+        {1'b1, forward_wb}:  WriteDataE = ResultW2;
        default: WriteDataE = 32'bx;
     endcase
 end
@@ -453,9 +462,14 @@ reg [31:0] ForwardDataM2;
 reg  [31:0] SrcAE2;
 always @ * begin
     case (ForwardAE2_i)
+        // forward from own pipe
        forward_mem: SrcAE2 = ALUResultM2_o; 
         forward_wb: SrcAE2 = ResultW2;
         forward_ex: SrcAE2 = RD1E2;
+        
+        // forward from other pipe
+        {1'b1, forward_mem}: SrcAE2 = ALUResultM_o;
+        {1'b1, forward_wb}:  SrcAE2 = ResultW;
        default: SrcAE2 = 32'bx;
     endcase
 end
@@ -464,9 +478,14 @@ reg  [31:0] SrcBE2;
 reg  [31:0] WriteDataE2;
 always @ * begin
     case (ForwardBE2_i)
+        // forward from own pipe
        forward_mem: WriteDataE2 = ForwardDataM2; 
         forward_wb: WriteDataE2 = ResultW2;
         forward_ex: WriteDataE2 = RD2E2;
+
+        // forward from other pipe
+        {1'b1, forward_mem}: WriteDataE2 = ALUResultM_o;
+        {1'b1, forward_wb}:  WriteDataE2 = ResultW;
        default: WriteDataE2 = 32'bx;
     endcase
 end
