@@ -377,9 +377,7 @@ end
 always @(posedge clk) begin
   if (reset)
     PCF2_o <= pc_start + 32'd4;
-  else if (FlushD2_i)
-    PCF2_o <= PCF2_o + 32'd4;  // Hold still for one cycle during mispredict
-  else if (!StallF2_i) begin
+  else if (!FlushD2_i && !StallF2_i) begin
     PCF2_o <= PCnewF + 32'd4;
   end
 end
