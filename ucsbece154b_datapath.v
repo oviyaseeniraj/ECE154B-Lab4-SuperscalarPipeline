@@ -128,6 +128,10 @@ reg [31:0] ResultW2;
 
 
 // ***** FETCH STAGE *********************************;
+
+wire BranchF = (InstrF_i[6:0] == instr_branch_op);
+wire JumpF = (InstrF_i[6:0] == instr_jal_op) || (InstrF_i[6:0] == instr_jalr_op);
+
 wire [31:0] PCPlus4F = PCF_o + (StallF2_i ? 32'd4 : 32'd8);
 wire [31:0] PCtargetF = BranchTakenF ? BTBtargetF : PCPlus4F;
 wire [31:0] mispredPC = BranchTakenE ? PCPlus4E : PCTargetE;
@@ -136,7 +140,7 @@ wire [31:0] PCnewF = Mispredict_o ? mispredPC : PCtargetF;
 always @ (posedge clk) begin
   if (reset)
     PCF_o <= pc_start;
-  else if (FlushD_i)
+  else if (FlushD_i || BranchF || JumpF)
     PCF_o <= PCF_o + 32'd4; // still advance for flush
   else if (!StallF_i) begin
     PCF_o <= PCnewF;
@@ -377,7 +381,7 @@ end
 always @(posedge clk) begin
   if (reset)
     PCF2_o <= pc_start + 32'd4;
-  else if (FlushD2_i || StallF2_i)
+  else if (FlushD2_i || StallF2_i || BranchF || JumpF)
     PCF2_o <= PCF2_o; // hold PC on flush / stall
   else
     PCF2_o <= PCnewF + 32'd4;
