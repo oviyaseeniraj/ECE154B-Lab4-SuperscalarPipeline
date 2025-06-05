@@ -422,7 +422,7 @@ always @ (posedge clk) begin
         RdD2_o <= 5'b0;
     end else if (!StallD2_i) begin
         InstrD2          <= InstrF2_i;
-        PCPlus4D2        <= PCPlus4F2;
+        //PCPlus4D2        <= PCPlus4F2;
         PCD2             <= PCF2_o;
         // PHTwriteaddrD2   <= PHTreadaddrF2;
         // BranchTakenD2    <= BranchTakenF2;
@@ -480,7 +480,7 @@ always @ (posedge clk) begin
         RD2E2     <= 32'b0;
         PCE2      <= 32'b0;
         ExtImmE2  <= 32'b0;
-        PCPlus4E2 <= 32'b0;
+        //PCPlus4E2 <= 32'b0;
         Rs1E2_o   <=  5'b0;
         Rs2E2_o   <=  5'b0;
         RdE2_o    <=  5'b0;
@@ -493,7 +493,7 @@ always @ (posedge clk) begin
         RD2E2     <= RD2D2;
         PCE2      <= PCD2;
         ExtImmE2  <= ExtImmD2;
-        PCPlus4E2 <= PCPlus4D2;
+        //PCPlus4E2 <= PCPlus4D2;
         Rs1E2_o   <= Rs1D2_o;
         Rs2E2_o   <= Rs2D2_o;
         RdE2_o    <= RdD2_o;
@@ -521,13 +521,13 @@ always @ (posedge clk) begin
         ALUResultM2_o <= 32'b0;
         WriteDataM2_o <= 32'b0;
         ExtImmM2      <= 32'b0;
-        PCPlus4M2     <= 32'b0;
+        //PCPlus4M2     <= 32'b0;
         RdM2_o        <=  5'b0;
     end else begin 
         ALUResultM2_o <= ALUResultE2;
         WriteDataM2_o <= WriteDataE2;
         ExtImmM2      <= ExtImmE2;
-        PCPlus4M2     <= PCPlus4E2;
+        //PCPlus4M2     <= PCPlus4E2;
         RdM2_o        <= RdE2_o;
     end 
 end
@@ -539,7 +539,7 @@ always @ * begin
    case(ResultSrcW2_i)
      MuxResult_mem: ResultW2 = ReadDataW2;
      MuxResult_aluout:  ResultW2 = ALUResultW2;
-     MuxResult_PCPlus4:  ResultW2 = PCPlus4W2;
+     //MuxResult_PCPlus4:  ResultW2 = PCPlus4W2;
      MuxResult_imm:  ResultW2 = ExtImmW2;
      default:        ResultW2 = 32'bx;
  endcase
@@ -550,13 +550,13 @@ always @ (posedge clk) begin
         ALUResultW2 <= 32'b0;
         ReadDataW2  <= 32'b0;
         ExtImmW2    <= 32'b0;
-        PCPlus4W2   <= 32'b0;
+        //PCPlus4W2   <= 32'b0;
         RdW2_o      <=  5'b0;
     end else begin 
         ALUResultW2 <= ALUResultM2_o;
         ReadDataW2  <= ReadDataM2_i;
         ExtImmW2    <= ExtImmM2;
-        PCPlus4W2   <= PCPlus4M2;
+        //PCPlus4W2   <= PCPlus4M2;
         RdW2_o      <= RdM2_o;
     end 
 end
