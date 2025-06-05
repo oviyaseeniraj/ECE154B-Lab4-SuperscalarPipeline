@@ -199,9 +199,9 @@ reg  [31:0] SrcAE;
 always @ * begin
     case (ForwardAE_i)
         // forward from own pipe
-       forward_mem: SrcAE = ALUResultM_o; 
-        forward_wb: SrcAE = ResultW;
-        forward_ex: SrcAE = RD1E;
+       {1'b0, forward_mem}: SrcAE = ALUResultM_o; 
+        {1'b0, forward_wb}: SrcAE = ResultW;
+        {1'b0, forward_ex}: SrcAE = RD1E;
 
         // forward from other pipe
         {1'b1, forward_mem}: SrcAE = ALUResultM2_o;
@@ -214,9 +214,9 @@ reg  [31:0] SrcBE;
 reg  [31:0] WriteDataE;
 always @ * begin
     case (ForwardBE_i)
-       forward_mem: WriteDataE = ForwardDataM; 
-        forward_wb: WriteDataE = ResultW;
-        forward_ex: WriteDataE = RD2E;
+       {1'b0, forward_mem}: WriteDataE = ForwardDataM; 
+        {1'b0, forward_wb}: WriteDataE = ResultW;
+        {1'b0, forward_ex}: WriteDataE = RD2E;
         
         // forward from other pipe
         {1'b1, forward_mem}: WriteDataE = ForwardDataM2;
@@ -463,9 +463,9 @@ reg  [31:0] SrcAE2;
 always @ * begin
     case (ForwardAE2_i)
         // forward from own pipe
-       forward_mem: SrcAE2 = ALUResultM2_o; 
-        forward_wb: SrcAE2 = ResultW2;
-        forward_ex: SrcAE2 = RD1E2;
+       {1'b0, forward_mem}: SrcAE2 = ALUResultM2_o; 
+        {1'b0, forward_wb}: SrcAE2 = ResultW2;
+        {1'b0, forward_ex}: SrcAE2 = RD1E2;
         
         // forward from other pipe
         {1'b1, forward_mem}: SrcAE2 = ALUResultM_o;
@@ -479,9 +479,9 @@ reg  [31:0] WriteDataE2;
 always @ * begin
     case (ForwardBE2_i)
         // forward from own pipe
-       forward_mem: WriteDataE2 = ForwardDataM2; 
-        forward_wb: WriteDataE2 = ResultW2;
-        forward_ex: WriteDataE2 = RD2E2;
+       {1'b0, forward_mem}: WriteDataE2 = ForwardDataM2; 
+        {1'b0, forward_wb}: WriteDataE2 = ResultW2;
+        {1'b0, forward_ex}: WriteDataE2 = RD2E2;
 
         // forward from other pipe
         {1'b1, forward_mem}: WriteDataE2 = ForwardDataM;

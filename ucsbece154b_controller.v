@@ -240,27 +240,27 @@ wire Hazard;
 // Forwarding logic
  always @ * begin
   if      ( (Rs1E_i == RdM_i) & RegWriteM & (Rs1E_i != 0) ) 
-         ForwardAE_o = forward_mem;
+         ForwardAE_o = {1'b0, forward_mem};
   else if ( (Rs1E_i == RdW_i) & RegWriteW_o & (Rs1E_i != 0) ) 
-         ForwardAE_o = forward_wb;
+         ForwardAE_o = {1'b0, forward_wb};
    else if ((Rs1E_i == RdM2_i) && RegWriteM2 && (Rs1E_i != 0)) 
     ForwardAE_o = {1'b1, forward_mem};
    else if ((Rs1E_i == RdW2_i) && RegWriteW2_o && (Rs1E_i != 0)) 
     ForwardAE_o = {1'b1, forward_wb};
-  else   ForwardAE_o = forward_ex;
+  else   ForwardAE_o = {1'b0, forward_ex};
  end
   
  always @ * begin
   if      ( (Rs2E_i == RdM_i) & RegWriteM & (Rs2E_i != 0) ) 
-         ForwardBE_o = forward_mem;
+         ForwardBE_o = {1'b0, forward_mem};
   else if ( (Rs2E_i == RdW_i) & RegWriteW_o & (Rs2E_i != 0) ) 
-         ForwardBE_o = forward_wb;
+         ForwardBE_o = {1'b0, forward_wb};
    else if ((Rs2E_i == RdM2_i) && RegWriteM2 && (Rs2E_i != 0)) 
     ForwardBE_o = {1'b1, forward_mem};
    else if ((Rs2E_i == RdW2_i) && RegWriteW2_o && (Rs2E_i != 0)) 
     ForwardBE_o = {1'b1, forward_wb};
 
-  else   ForwardBE_o = forward_ex;
+  else   ForwardBE_o = {1'b0, forward_ex};
  end
 
 // Stall logic
@@ -434,27 +434,27 @@ always @(posedge clk) begin
   // Forwarding logic for slot 2 (Rs1E2_i)
    always @ * begin
       if      ( (Rs1E2_i == RdM2_i) & RegWriteM2 & (Rs1E2_i != 0) ) 
-               ForwardAE2_o = forward_mem;
+               ForwardAE2_o = {1'b0, forward_mem};
       else if ( (Rs1E2_i == RdW2_i) & RegWriteW2_o & (Rs1E2_i != 0) ) 
-               ForwardAE2_o = forward_wb;
+               ForwardAE2_o = {1'b0, forward_wb};
       else if ( (Rs1E2_i == RdM_i)  & RegWriteM  & (Rs1E2_i != 0) ) 
-               ForwardAE2_o = forward_mem;
+               ForwardAE2_o = {1'b1, forward_mem};
       else if ( (Rs1E2_i == RdW_i)  & RegWriteW_o  & (Rs1E2_i != 0) ) 
-               ForwardAE2_o = forward_wb;
-      else   ForwardAE2_o = forward_ex;
+               ForwardAE2_o = {1'b1, forward_wb};
+      else   ForwardAE2_o = {1'b0, forward_ex};
    end
 
    // Forwarding logic for slot 2 (Rs2E2_i)
    always @ * begin
       if      ( (Rs2E2_i == RdM2_i) & RegWriteM2 & (Rs2E2_i != 0) ) 
-               ForwardBE2_o = forward_mem;
+               ForwardBE2_o = {1'b0, forward_mem};
       else if ( (Rs2E2_i == RdW2_i) & RegWriteW2_o & (Rs2E2_i != 0) ) 
-               ForwardBE2_o = forward_wb;
+               ForwardBE2_o = {1'b0, forward_wb};
       else if ( (Rs2E2_i == RdM_i)  & RegWriteM  & (Rs2E2_i != 0) ) 
-               ForwardBE2_o = forward_mem;
+               ForwardBE2_o = {1'b1, forward_mem};
       else if ( (Rs2E2_i == RdW_i)  & RegWriteW_o  & (Rs2E2_i != 0) ) 
-               ForwardBE2_o = forward_wb;
-      else   ForwardBE2_o = forward_ex;
+               ForwardBE2_o = {1'b1, forward_wb};
+      else   ForwardBE2_o = {1'b0, forward_ex};
    end
 
 
