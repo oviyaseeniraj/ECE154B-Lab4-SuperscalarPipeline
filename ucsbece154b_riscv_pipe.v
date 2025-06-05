@@ -31,7 +31,8 @@ wire [2:0] funct3;
 wire funct7b5;
 wire [2:0] ImmSrcD;
 wire [2:0] ALUControlE;
-wire [1:0] ForwardAE, ForwardBE, ResultSrcW, ResultSrcM;
+wire [2:0] ForwardAE, ForwardBE;
+wire [1:0] ResultSrcW, ResultSrcM;
 wire [4:0] Rs1D, Rs2D, Rs1E, Rs2E, RdE, RdM, RdW;
 wire mispredict;
 
@@ -41,7 +42,8 @@ wire [2:0] funct3_2;
 wire funct7b5_2;
 wire [2:0] ImmSrcD2;
 wire [2:0] ALUControlE2;
-wire [1:0] ForwardAE2, ForwardBE2, ResultSrcW2, ResultSrcM2;
+wire [2:0] ForwardAE2, ForwardBE2;
+wire [1:0] ResultSrcW2, ResultSrcM2;
 wire [4:0] Rs1D2, Rs2D2, Rs1E2, Rs2E2, RdE2, RdM2, RdW2;
 
 ucsbece154b_controller c (
