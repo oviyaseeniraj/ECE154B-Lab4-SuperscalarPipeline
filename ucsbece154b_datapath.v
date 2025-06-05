@@ -142,8 +142,8 @@ wire RdD2 = InstrF2_i[11:7];
 
 wire opF = InstrF_i[6:0];
 wire opF2 = InstrF2_i[6:0];
-wire RegWriteD;
-wire RegWriteD2;
+reg RegWriteD;
+reg RegWriteD2;
 
 always @ (*) begin
     case (opF)
