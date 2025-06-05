@@ -368,16 +368,13 @@ end
 always @(posedge clk) begin
   if (reset)
     PCF2_o <= pc_start + 32'd4;
-  else if (FlushD2_i)
-    PCF2_o <= PCF2_o + 32'd4; // still advance PC for flush
+  else if (FlushD2_i || Mispredict_o || Mispredict2_o)
+    PCF2_o <= PCF2_o;  // hold PCF2_o to allow flush
   else if (!StallF2_i) begin
-    if (Mispredict_o || Mispredict2_o) begin
-      PCF2_o <= PCTargetE; // if mispredict, use target from EX stage
-    end else if (PCSrcE2_i) begin
-      PCF2_o <= PCTargetE2; // if branch taken, use target from EX stage
-    end else begin
-      PCF2_o <= PCF_o + 32'd4; // otherwise, just increment by 4
-    end
+    if (PCSrcE2_i)
+      PCF2_o <= PCTargetE2;
+    else
+      PCF2_o <= PCF_o + 32'd4; // dual issue increment assumes 4 offset from slot 1
   end
 end
 
