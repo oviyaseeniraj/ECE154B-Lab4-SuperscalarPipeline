@@ -145,6 +145,7 @@ end
 
 // ***** DECODE STAGE ********************************
 reg [31:0] InstrD, PCPlus4D, PCD;
+reg [31:0] ForwardDataM2;
 
 assign op_o       = InstrD[6:0];
 assign funct3_o   = InstrD[14:12];
@@ -187,6 +188,7 @@ always @ (posedge clk) begin
 end
 
 // ***** EXECUTE STAGE ******************************
+
 reg [31:0] RD1E, RD2E;
 reg [3:0] funct3E;
 reg [6:0] opE;
@@ -456,8 +458,6 @@ end
 reg [31:0] RD1E2, RD2E2;
 reg [3:0] funct3E2;
 reg [6:0] opE2;
-
-reg [31:0] ForwardDataM2;
 
 reg  [31:0] SrcAE2;
 always @ * begin
