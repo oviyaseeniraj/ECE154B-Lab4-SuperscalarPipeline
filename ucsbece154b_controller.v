@@ -466,8 +466,8 @@ always @(posedge clk) begin
 
    assign StallF2_o = loadUse1 || loadUse2;
    assign StallD2_o = loadUse1 || loadUse2;
-   assign FlushD2_o = ~IssueSlot2;
-   assign FlushE2_o = ~IssueSlot2 || Mispredict2_i;
+   assign FlushD2_o = ~IssueSlot2 || Mispredict_i || Mispredict2_i;
+   assign FlushE2_o = ~IssueSlot2 || Mispredict2_i || Mispredict_i;
 
 
 endmodule
