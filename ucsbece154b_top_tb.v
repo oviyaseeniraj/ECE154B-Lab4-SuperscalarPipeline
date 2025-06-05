@@ -32,6 +32,8 @@ wire [31:0] PCF_o = top.riscv.dp.PCF_o;
 wire [31:0] PCF2_o = top.riscv.dp.PCF2_o;
 wire [31:0] InstrF_i = top.riscv.dp.InstrF_i;
 wire [31:0] InstrF2_i = top.riscv.dp.InstrF2_i;
+wire [31:0] PCE = top.riscv.dp.PCE;
+wire [31:0] PCE2 = top.riscv.dp.PCE2;
 
 wire RAW = top.riscv.c.RAW;
 wire WAW = top.riscv.c.WAW;
