@@ -143,8 +143,6 @@ wire [31:0] PCnewF = Mispredict_o ? mispredPC : PCtargetF;
 always @ (posedge clk) begin
   if (reset)
     PCF_o <= pc_start;
-  else if (FlushD_i)
-    PCF_o <= PCF_o + 32'd4; // still advance for flush
   else if (!StallF_i) begin
     PCF_o <= PCnewF;
   end
@@ -385,8 +383,6 @@ end
 always @(posedge clk) begin
   if (reset)
     PCF2_o <= pc_start + 32'd4;
-  else if (FlushD2_i || StallF2_i)
-    PCF2_o <= PCF2_o + 32'd4;
   else
     PCF2_o <= PCnewF + 32'd4;
 end
