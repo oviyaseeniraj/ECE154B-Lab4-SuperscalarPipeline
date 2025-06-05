@@ -142,28 +142,28 @@ wire RdD2 = InstrF2_i[11:7];
 
 wire opF = InstrF_i[6:0];
 wire opF2 = InstrF2_i[6:0];
-reg RegWriteD;
-reg RegWriteD2;
+reg RegWriteF;
+reg RegWriteF2;
 
 always @ (*) begin
     case (opF)
-        instr_lui_op, instr_jal_op, instr_jalr_op: RegWriteD = 1'b1;
-        instr_lw_op: RegWriteD = 1'b1;
-        instr_sw_op: RegWriteD = 1'b0;
-        instr_branch_op: RegWriteD = 1'b0;
-        default: RegWriteD = 1'b0; // NOP or other instructions
+        instr_lui_op, instr_jal_op, instr_jalr_op: RegWriteF = 1'b1;
+        instr_lw_op: RegWriteF = 1'b1;
+        instr_sw_op: RegWriteF = 1'b0;
+        instr_branch_op: RegWriteF = 1'b0;
+        default: RegWriteF = 1'b0; // NOP or other instructions
     endcase
     case (opF2)
-        instr_lui_op, instr_jal_op, instr_jalr_op: RegWriteD2 = 1'b1;
-        instr_lw_op: RegWriteD2 = 1'b1;
-        instr_sw_op: RegWriteD2 = 1'b0;
-        instr_branch_op: RegWriteD2 = 1'b0;
-        default: RegWriteD2 = 1'b0; // NOP or other instructions
+        instr_lui_op, instr_jal_op, instr_jalr_op: RegWriteF2 = 1'b1;
+        instr_lw_op: RegWriteF2 = 1'b1;
+        instr_sw_op: RegWriteF2 = 1'b0;
+        instr_branch_op: RegWriteF2 = 1'b0;
+        default: RegWriteF2 = 1'b0; // NOP or other instructions
     endcase
 end
 
-wire RAWF = ((Rs1D2 == RdD1) && (RdD1 != 5'b0) || (Rs2D2 == RdD1) && (RdD1 != 5'b0)) && RegWriteD;
-wire WAWF = (RdD1 == RdD2) && (RdD1 != 5'b0) && RegWriteD && RegWriteD2;
+wire RAWF = ((Rs1D2 == RdD1) && (RdD1 != 5'b0) || (Rs2D2 == RdD1) && (RdD1 != 5'b0)) && RegWriteF;
+wire WAWF = (RdD1 == RdD2) && (RdD1 != 5'b0) && RegWriteF && RegWriteF2;
 wire [31:0] PCPlus4F = PCF_o + ((StallF2_i || BranchJump || RAWF || WAWF) ? 32'd4 : 32'd8);
 wire [31:0] PCtargetF = BranchTakenF ? BTBtargetF : PCPlus4F;
 wire [31:0] mispredPC = BranchTakenE ? PCPlus4E : PCTargetE;
