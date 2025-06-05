@@ -374,31 +374,15 @@ end
 
 // ***** FETCH STAGE *********************************
 
-
-reg mispredict_hold;
-
-always @(posedge clk) begin
-  if (reset)
-    mispredict_hold <= 0;
-  else
-    mispredict_hold <= Mispredict_o;
-end
-
 always @(posedge clk) begin
   if (reset)
     PCF2_o <= pc_start + 32'd4;
-  else if (FlushD2_i || mispredict_hold)
-    PCF2_o <= PCF2_o;  // Hold still for one cycle during mispredict
+  else if (FlushD2_i)
+    PCF2_o <= PCF2_o + 32'd4;  // Hold still for one cycle during mispredict
   else if (!StallF2_i) begin
-    if (PCSrcE2_i)
-      PCF2_o <= PCTargetE2;
-    else if (PCF2_o < PCF_o)
-      PCF2_o <= PCF_o + 32'd4;  // Realign if ever behind
-    else
-      PCF2_o <= PCF2_o + 32'd4;
+    PCF2_o <= PCnewF + 32'd4;
   end
 end
-
 
 
 // ***** DECODE STAGE ********************************
