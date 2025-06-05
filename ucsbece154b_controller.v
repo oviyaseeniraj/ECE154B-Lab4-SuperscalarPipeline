@@ -459,8 +459,13 @@ always @(posedge clk) begin
 
 
    // Hazard unit (stall and data forwarding)
-   assign RAW = ((Rs1D2_i == RdD1_i) && (RdD1_i != 5'b0) ||
-              (Rs2D2_i == RdD1_i) && (RdD1_i != 5'b0)) && RegWriteD;
+   // assign RAW = ((Rs1D2_i == RdD1_i) && (RdD1_i != 5'b0) ||
+   //            (Rs2D2_i == RdD1_i) && (RdD1_i != 5'b0)) && RegWriteD;
+   assign RAW = RegWriteD && (RdD1_i != 5'b0) && (
+                (Rs1D2_i == RdD1_i) || 
+                (Rs2D2_i == RdD1_i)
+            );
+
 
    assign WAW = (RdD1_i == RdD2_i) && (RdD1_i != 5'b0) &&
                RegWriteD && RegWriteD2;
