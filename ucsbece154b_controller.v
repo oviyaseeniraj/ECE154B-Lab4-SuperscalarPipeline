@@ -480,7 +480,7 @@ always @(posedge clk) begin
    assign StallF2_o = Hazard;
    assign StallD2_o = Hazard;
    assign FlushD2_o = Hazard || Mispredict_i;
-   assign FlushE2_o = Hazard || Mispredict_i;
+   assign FlushE2_o = Hazard || Mispredict_i || BranchE || JumpE;
 
 
 endmodule
