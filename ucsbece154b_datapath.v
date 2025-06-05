@@ -66,7 +66,6 @@ module ucsbece154b_datapath (
     input          [1:0] ResultSrcW2_i,
     output reg     [4:0] RdW2_o,
     input          [1:0] ResultSrcM2_i,
-    output reg           Mispredict2_o,
 
     // From decode stage of datapath
     output reg [4:0]  RdD1_o, RdD2_o,
@@ -371,7 +370,7 @@ always @(posedge clk) begin
   if (reset)
     mispredict_hold <= 0;
   else
-    mispredict_hold <= Mispredict_o || Mispredict2_o;
+    mispredict_hold <= Mispredict_o;
 end
 
 always @(posedge clk) begin
@@ -489,7 +488,7 @@ ucsbece154b_alu alu2 (
 );
 
 always @ (posedge clk) begin
-    if (reset | FlushE2_i | Mispredict2_o) begin
+    if (reset | FlushE2_i) begin
         RD1E2     <= 32'b0;
         RD2E2     <= 32'b0;
         PCE2      <= 32'b0;

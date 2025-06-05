@@ -43,7 +43,6 @@ wire [2:0] ImmSrcD2;
 wire [2:0] ALUControlE2;
 wire [1:0] ForwardAE2, ForwardBE2, ResultSrcW2, ResultSrcM2;
 wire [4:0] Rs1D2, Rs2D2, Rs1E2, Rs2E2, RdE2, RdM2, RdW2;
-wire mispredict2;
 
 ucsbece154b_controller c (
     .clk(clk), .reset(reset),
@@ -104,7 +103,6 @@ ucsbece154b_controller c (
     .RegWriteW2_o(RegWriteW2),
     .ResultSrcW2_o(ResultSrcW2),
     .ResultSrcM2_o(ResultSrcM2),
-    .Mispredict2_i(mispredict2),
 
     .RAW(RAW),
     .WAR(WAR),
@@ -173,7 +171,6 @@ ucsbece154b_datapath dp (
     .ResultSrcW2_i(ResultSrcW2),
     .RdW2_o(RdW2),
     .ResultSrcM2_i(ResultSrcM2),
-    .Mispredict2_o(mispredict2),
     .RdD1_o(RdD1),
     .RdD2_o(RdD2),
     .RAW(RAW),

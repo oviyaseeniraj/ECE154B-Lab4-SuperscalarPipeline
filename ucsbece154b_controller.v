@@ -60,7 +60,6 @@ module ucsbece154b_controller (
     output reg           RegWriteW2_o,
     output reg     [1:0] ResultSrcW2_o, 
     output reg     [1:0] ResultSrcM2_o,
-    input                Mispredict2_i,
 
     input [4:0] RdD1_i,
     input [4:0] RdD2_i,
@@ -259,8 +258,8 @@ wire Hazard;
  //assign lwStall = (ResultSrcE == 1) & ( (Rs1D_i == RdE_i) | (Rs2D_i == RdE_i) ) & (RdE_i != 0); 
  assign StallF_o = lwStall; 
  assign StallD_o = lwStall; 
- assign FlushD_o = Mispredict_i | Mispredict2_i; 
- assign FlushE_o = lwStall | Mispredict_i | Mispredict2_i;
+ assign FlushD_o = Mispredict_i; 
+ assign FlushE_o = lwStall | Mispredict_i;
 
 
 // slot 2
@@ -470,8 +469,8 @@ always @(posedge clk) begin
 
    assign StallF2_o = Hazard;
    assign StallD2_o = Hazard;
-   assign FlushD2_o = Hazard || Mispredict_i || Mispredict2_i;
-   assign FlushE2_o = Hazard || Mispredict2_i || Mispredict_i;
+   assign FlushD2_o = Hazard || Mispredict_i;
+   assign FlushE2_o = Hazard || Mispredict_i;
 
 
 endmodule
