@@ -377,10 +377,12 @@ end
 always @(posedge clk) begin
   if (reset)
     PCF2_o <= pc_start + 32'd4;
-  else if (!FlushD2_i && !StallF2_i) begin
+  else if (FlushD2_i || StallF2_i)
+    PCF2_o <= PCF2_o; // hold PC on flush / stall
+  else
     PCF2_o <= PCnewF + 32'd4;
-  end
 end
+
 
 
 // ***** DECODE STAGE ********************************
