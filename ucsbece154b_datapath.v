@@ -147,16 +147,16 @@ wire RegWriteD2;
 
 always @ (*) begin
     case (opF)
-        instr_lui_op, instr_auipc_op, instr_jal_op, instr_jalr_op: RegWriteD = 1'b1;
-        instr_load_op: RegWriteD = 1'b1;
-        instr_store_op: RegWriteD = 1'b0;
+        instr_lui_op, instr_jal_op, instr_jalr_op: RegWriteD = 1'b1;
+        instr_lw_op: RegWriteD = 1'b1;
+        instr_sw_op: RegWriteD = 1'b0;
         instr_branch_op: RegWriteD = 1'b0;
         default: RegWriteD = 1'b0; // NOP or other instructions
     endcase
     case (opF2)
-        instr_lui_op, instr_auipc_op, instr_jal_op, instr_jalr_op: RegWriteD2 = 1'b1;
-        instr_load_op: RegWriteD2 = 1'b1;
-        instr_store_op: RegWriteD2 = 1'b0;
+        instr_lui_op, instr_jal_op, instr_jalr_op: RegWriteD2 = 1'b1;
+        instr_lw_op: RegWriteD2 = 1'b1;
+        instr_sw_op: RegWriteD2 = 1'b0;
         instr_branch_op: RegWriteD2 = 1'b0;
         default: RegWriteD2 = 1'b0; // NOP or other instructions
     endcase
