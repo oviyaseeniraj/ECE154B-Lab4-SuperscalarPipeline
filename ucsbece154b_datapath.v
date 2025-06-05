@@ -371,7 +371,13 @@ always @(posedge clk) begin
   else if (FlushD2_i)
     PCF2_o <= PCF2_o + 32'd4; // still advance PC for flush
   else if (!StallF2_i) begin
-    PCF2_o <= PCnewF + 32'd4; // keep pcf2 4 ahead of pcf
+    if (Mispredict_o || Mispredict2_o) begin
+      PCF2_o <= PCTargetE; // if mispredict, use target from EX stage
+    end else if (PCSrcE2_i) begin
+      PCF2_o <= PCTargetE2; // if branch taken, use target from EX stage
+    end else begin
+      PCF2_o <= PCF_o + 32'd4; // otherwise, just increment by 4
+    end
   end
 end
 
