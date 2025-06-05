@@ -459,19 +459,22 @@ always @(posedge clk) begin
 
 
    // Hazard unit (stall and data forwarding)
-   // assign RAW = ((Rs1D2_i == RdD1_i) && (RdD1_i != 5'b0) ||
-   //            (Rs2D2_i == RdD1_i) && (RdD1_i != 5'b0)) && RegWriteD;
-   assign RAW = RegWriteD && (RdD1_i != 5'b0) && (
-                (Rs1D2_i == RdD1_i) || 
-                (Rs2D2_i == RdD1_i)
-            );
+   wire Rs2ValidD2 = (op2_i == instr_Rtype_op) || (op2_i == instr_sw_op) || (op2_i == instr_branch_op);
 
+   assign RAW = RegWriteD && (RdD1_i != 5'b0) &&
+               ((Rs1D2_i == RdD1_i) ||
+               (Rs2ValidD2 && Rs2D2_i == RdD1_i));
+   
 
    assign WAW = (RdD1_i == RdD2_i) && (RdD1_i != 5'b0) &&
                RegWriteD && RegWriteD2;
 
-   assign WAR = ((Rs1D_i == RdD2_i) && (RdD2_i != 5'b0) ||
-               (Rs2D_i == RdD2_i) && (RdD2_i != 5'b0)) && RegWriteD2;
+   wire Rs2ValidD1 = (op_i == instr_Rtype_op) || (op_i == instr_sw_op) || (op_i == instr_branch_op);
+
+   assign WAR = RegWriteD2 && (RdD2_i != 5'b0) &&
+               ((Rs1D_i == RdD2_i) ||
+               (Rs2ValidD1 && Rs2D_i == RdD2_i));
+
 
 
    wire lwStall2 = (ResultSrcE2 == 2'b01) && ((Rs1D2_i == RdE2_i && RdE2_i != 0) || (Rs2D2_i == RdE2_i && RdE2_i != 0));
