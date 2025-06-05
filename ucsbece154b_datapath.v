@@ -135,7 +135,7 @@ wire BranchF2 = (InstrF2_i[6:0] == instr_branch_op);
 wire JumpF2 = (InstrF2_i[6:0] == instr_jal_op) || (InstrF2_i[6:0] == instr_jalr_op);
 wire BranchJump = BranchF || JumpF || BranchF2 || JumpF2;
 
-wire [31:0] PCPlus4F = PCF_o + ((StallF2_i || BranchJump) ? 32'd4 : 32'd8);
+wire [31:0] PCPlus4F = PCF_o + ((StallF2_i || BranchJump || RAW || WAW) ? 32'd4 : 32'd8);
 wire [31:0] PCtargetF = BranchTakenF ? BTBtargetF : PCPlus4F;
 wire [31:0] mispredPC = BranchTakenE ? PCPlus4E : PCTargetE;
 wire [31:0] PCnewF = Mispredict_o ? mispredPC : PCtargetF;
