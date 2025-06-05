@@ -166,7 +166,14 @@ always @ (*) begin
     endcase
 end
 
-wire RAWF = ((Rs1D2 == RdD1) && (RdD1 != 5'b0) || (Rs2D2 == RdD1) && (RdD1 != 5'b0)) && RegWriteF;
+wire isRtypeF2 = (opF2 == instr_Rtype_op);
+wire isStypeF2 = (opF2 == instr_sw_op);
+wire check_rs2F2 = isRtypeF2 || isStypeF2;
+
+wire RAWF = ((Rs1D2 == RdD1) && (RdD1 != 5'b0) || 
+             (check_rs2F2 && (Rs2D2 == RdD1) && (RdD1 != 5'b0))) 
+             && RegWriteF;
+
 wire WAWF = (RdD1 == RdD2) && (RdD1 != 5'b0) && RegWriteF && RegWriteF2;
 wire [31:0] PCPlus4F = PCF_o + ((StallF2_i || BranchJump || RAWF || WAWF) ? 32'd4 : 32'd8);
 wire [31:0] PCtargetF = BranchTakenF ? BTBtargetF : PCPlus4F;
