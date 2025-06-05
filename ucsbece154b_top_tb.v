@@ -89,7 +89,7 @@ initial begin
         if (!reset) begin
             if (top.riscv.dp.PCE !== 32'b0)
                 instruction_count = instruction_count + 1;
-            if (top.riscv.dp.PCE !== 32'b0)
+            if (top.riscv.dp.PCE2 !== 32'b0)
                 instruction_count = instruction_count + 1;
 
             // Branch / Jump - Slot 1
