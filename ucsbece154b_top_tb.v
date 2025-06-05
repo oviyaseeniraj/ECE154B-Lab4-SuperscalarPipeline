@@ -101,20 +101,6 @@ initial begin
                         jump_miss_count = jump_miss_count + 1;
                 end
             endcase
-
-            // Branch / Jump - Slot 2
-            case (top.riscv.dp.opE2)
-                7'b1100011: begin
-                    branch_count = branch_count + 1;
-                    if (top.riscv.dp.Mispredict2_o)
-                        branch_miss_count = branch_miss_count + 1;
-                end
-                7'b1101111, 7'b1100111: begin
-                    jump_count = jump_count + 1;
-                    if (!top.riscv.dp.BranchTakenF2)
-                        jump_miss_count = jump_miss_count + 1;
-                end
-            endcase
         end
     end
 
