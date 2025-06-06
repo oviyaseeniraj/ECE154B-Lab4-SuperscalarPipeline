@@ -56,7 +56,7 @@ always @ (posedge clk) begin
 
         // Initialize PHT to strongly not taken
          for (i = 0; i < (1 << NUM_GHR_BITS); i = i + 1) begin
-             PHT[i] <= 2'b00;
+             PHT[i] <= 2'b01;
          end
          
          GHR <= {NUM_GHR_BITS{1'b0}};

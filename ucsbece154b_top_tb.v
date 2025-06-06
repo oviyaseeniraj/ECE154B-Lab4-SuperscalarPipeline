@@ -100,7 +100,7 @@ initial begin
                 end
                 7'b1101111, 7'b1100111: begin
                     jump_count = jump_count + 1;
-                    if (!top.riscv.dp.BranchTakenF)
+                    if (!top.riscv.dp.BranchTakenE)
                         jump_miss_count = jump_miss_count + 1;
                 end
             endcase
