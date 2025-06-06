@@ -432,7 +432,7 @@ end
 always @(posedge clk) begin
   if (reset)
     PCF2_o <= pc_start + 32'd4;
-  else
+  else if (!(StallF_i | StallF2_i | BranchStall))   // <= NEW
     PCF2_o <= PCnewF + 32'd4;
 end
 
