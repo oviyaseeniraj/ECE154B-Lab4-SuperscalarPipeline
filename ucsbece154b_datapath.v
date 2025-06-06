@@ -175,7 +175,16 @@ wire RAWF = ((Rs1D2 == RdD1) && (RdD1 != 5'b0) ||
              && RegWriteF;
 
 wire WAWF = (RdD1 == RdD2) && (RdD1 != 5'b0) && RegWriteF && RegWriteF2;
-wire [31:0] PCPlus4F = PCF_o + ((StallF2_i || BranchJump || RAWF || WAWF) ? 32'd4 : 32'd8);
+
+
+// Only *predicted-taken* control flow in Slot-1 blocks dual issue.
+wire PredTakenF = (BranchF && BranchTakenF) || JumpF;
+// We never allow a branch in Slot-2, so BranchF2 / JumpF2 are gone.
+// RAW/WAW hazards still break the pair, of course.
+wire PairBreak = StallF2_i || RAWF || WAWF || PredTakenF;
+
+wire [31:0] PCPlus4F = PCF_o + (PairBreak ? 32'd4 : 32'd8);
+//wire [31:0] PCPlus4F = PCF_o + ((StallF2_i || BranchJump || RAWF || WAWF) ? 32'd4 : 32'd8);
 wire [31:0] PCtargetF = BranchTakenF ? BTBtargetF : PCPlus4F;
 wire [31:0] mispredPC = BranchTakenE ? PCPlus4E : PCTargetE;
 wire [31:0] PCnewF = Mispredict_o ? mispredPC : PCtargetF;
