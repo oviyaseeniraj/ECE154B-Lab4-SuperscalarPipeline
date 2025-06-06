@@ -480,15 +480,15 @@ always @(posedge clk) begin
    wire lwStall2 = (ResultSrcE2 == 2'b01) && ((Rs1D2_i == RdE2_i && RdE2_i != 0) || (Rs2D2_i == RdE2_i && RdE2_i != 0));
 
    // load use hazards between pipelines
-   wire loadUse1 = (ResultSrcE == 2'b01) && ((Rs1D_i == RdE2_i && RdE2_i != 0) || (Rs2D_i == RdE2_i && RdE2_i != 0));
-   wire loadUse2 = (ResultSrcE2 == 2'b01) && ((Rs1D2_i == RdE_i && RdE_i != 0) || (Rs2D2_i == RdE_i && RdE_i != 0));
+   wire loadUse2 = (ResultSrcE2 == 2'b01) && ((Rs1D_i == RdE2_i && RdE2_i != 0) || (Rs2D_i == RdE2_i && RdE2_i != 0));
+   wire loadUse1 = (ResultSrcE == 2'b01) && ((Rs1D2_i == RdE_i && RdE_i != 0) || (Rs2D2_i == RdE_i && RdE_i != 0));
 
    assign Hazard = RAW || WAW || loadUse1 || loadUse2; 
 
    assign StallF2_o = Hazard;
    assign StallD2_o = Hazard;
    assign FlushD2_o = Hazard || Mispredict_i;
-   assign FlushE2_o = Hazard || Mispredict_i || BranchE || JumpE;
+   assign FlushE2_o = Hazard || Mispredict_i;
 
 
 endmodule
