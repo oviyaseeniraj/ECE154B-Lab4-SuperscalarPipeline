@@ -280,7 +280,6 @@ wire BranchStall =
  assign StallD_o = lwStall | BranchStall;
  assign FlushE_o = (lwStall | BranchStall) | Mispredict_i;
 
-
 // slot 2
 
 // ***** FETCH STAGE ***************************************
