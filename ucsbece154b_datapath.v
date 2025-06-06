@@ -428,15 +428,12 @@ end
 
 // ***** FETCH STAGE *********************************
 
-
 always @(posedge clk) begin
   if (reset)
     PCF2_o <= pc_start + 32'd4;
-  else if (!(StallF_i | StallF2_i | BranchStall))   // <= NEW
-    PCF2_o <= PCnewF + 32'd4;
+  else if (!(StallF_i | StallF2_i))
+       PCF2_o <= PCnewF + 32'd4;
 end
-
-
 
 // ***** DECODE STAGE ********************************
 reg [31:0] InstrD2, PCPlus4D2, PCD2;
