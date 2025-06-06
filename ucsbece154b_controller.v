@@ -487,12 +487,13 @@ always @(posedge clk) begin
                 ((Rs1D_i  == RdE2_i && RdE2_i != 0) ||
                  (Rs2D_i  == RdE2_i && RdE2_i != 0));
 
-   assign Hazard = RAW || WAW || lwStall2 || loadUse1 || loadUse2;
+   assign Hazard = RAW || WAW || loadUse1 || loadUse2; 
+   assign BranchJump = BranchD || JumpD || BranchD2 || JumpD2;
 
-   assign StallF2_o = lwStall2;
-   assign StallD2_o = lwStall2;
-   assign FlushD2_o = (RAW || WAW || loadUse1 || loadUse2) || Mispredict_i;
-   assign FlushE2_o = (RAW || WAW || loadUse1 || loadUse2) || Mispredict_i;
+   assign StallF2_o = Hazard;
+   assign StallD2_o = Hazard;
+   assign FlushD2_o = Hazard || Mispredict_i || BranchJump;
+   assign FlushE2_o = Hazard || Mispredict_i || BranchJump;
 
 
 endmodule
