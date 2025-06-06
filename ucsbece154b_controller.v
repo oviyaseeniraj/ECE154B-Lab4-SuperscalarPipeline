@@ -489,8 +489,8 @@ always @(posedge clk) begin
 
    assign Hazard = RAW || WAW || loadUse1 || loadUse2 || BranchD || JumpD || BranchD2 || JumpD2;
 
-   assign StallF2_o = Hazard;
-   assign StallD2_o = Hazard;
+   assign StallF2_o = lwStall2;
+   assign StallD2_o = lwStall2;
    assign FlushD2_o = Mispredict_i;
    assign FlushE2_o = Hazard || Mispredict_i;
 
