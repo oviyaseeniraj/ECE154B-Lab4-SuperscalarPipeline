@@ -429,13 +429,12 @@ end
 // ***** FETCH STAGE *********************************
 
 always @(posedge clk) begin
-  if (reset) begin
-    PCF2_o <= pc_start + 32'd4;
-  end
-  else if (!StallF_i && !StallF2_i) begin
-    PCF2_o <= PCF_o + 32'd4;
-  end
+    if (reset)
+       PCF2_o <= pc_start + 32'd4;
+    else if (!StallF2_i && !PairBreak)   // freeze slot-2 on stall or pair break
+       PCF2_o <= PCF_o + 32'd4;          // just the next word after slot-1
 end
+
 
 
 
