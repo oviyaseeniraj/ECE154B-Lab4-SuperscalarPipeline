@@ -428,12 +428,13 @@ end
 
 // ***** FETCH STAGE *********************************
 
-
 always @(posedge clk) begin
-  if (reset)
+  if (reset) begin
     PCF2_o <= pc_start + 32'd4;
-  else if (!StallF2_i)
-    PCF2_o <= PCnewF + 32'd4;
+  end
+  else if (!StallF_i && !StallF2_i) begin
+    PCF2_o <= PCF_o + 32'd4;
+  end
 end
 
 
