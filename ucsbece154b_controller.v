@@ -265,11 +265,20 @@ wire Hazard;
 
 // Stall logic
  wire lwStall = (ResultSrcE == 1) & ((Rs1D_i == RdE_i) | (Rs2D_i == RdE_i)) & (RdE_i != 0); 
+ // A branch in Decode uses RS1 and (for beq/bne) RS2 **before** they can be
+// forwarded, so stall if either is still in EX or MEM.
+wire BranchStall =
+         BranchD &&
+        ( (Rs1D_i == RdE_i && RdE_i != 0)    // producer in EX
+       || (Rs2D_i == RdE_i && RdE_i != 0)
+       || (Rs1D_i == RdM_i && RdM_i != 0)    // producer in MEM
+       || (Rs2D_i == RdM_i && RdM_i != 0) );
+
  //assign lwStall = (ResultSrcE == 1) & ( (Rs1D_i == RdE_i) | (Rs2D_i == RdE_i) ) & (RdE_i != 0); 
- assign StallF_o = lwStall; 
- assign StallD_o = lwStall; 
  assign FlushD_o = Mispredict_i; 
- assign FlushE_o = lwStall | Mispredict_i;
+ assign StallF_o = lwStall | BranchStall;
+ assign StallD_o = lwStall | BranchStall;
+ assign FlushE_o = (lwStall | BranchStall) | Mispredict_i;
 
 
 // slot 2
