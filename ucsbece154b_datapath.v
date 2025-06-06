@@ -181,7 +181,7 @@ wire WAWF = (RdD1 == RdD2) && (RdD1 != 5'b0) && RegWriteF && RegWriteF2;
 wire PredTakenF = (BranchF && BranchTakenF) || JumpF;
 // We never allow a branch in Slot-2, so BranchF2 / JumpF2 are gone.
 // RAW/WAW hazards still break the pair, of course.
-wire PairBreak = StallF2_i || RAWF || WAWF || PredTakenF;
+wire PairBreak = RAWF || WAWF || PredTakenF;
 
 wire [31:0] PCPlus4F = PCF_o + (PairBreak ? 32'd4 : 32'd8);
 //wire [31:0] PCPlus4F = PCF_o + ((StallF2_i || BranchJump || RAWF || WAWF) ? 32'd4 : 32'd8);
