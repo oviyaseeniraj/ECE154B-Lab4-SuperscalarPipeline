@@ -487,8 +487,8 @@ always @(posedge clk) begin
                 ((Rs1D_i  == RdE2_i && RdE2_i != 0) ||
                  (Rs2D_i  == RdE2_i && RdE2_i != 0));
 
-   assign BranchJump = BranchE || JumpE || BranchE2 || JumpE2;
-   assign Hazard = RAW || WAW || loadUse1 || loadUse2 || BranchJump; 
+   assign Hazard = RAW || WAW || loadUse1 || loadUse2; 
+   assign BranchJump = BranchE || JumpE;
 
    assign StallF2_o = Hazard;
    assign StallD2_o = Hazard;
